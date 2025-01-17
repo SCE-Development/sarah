@@ -4,7 +4,7 @@ const Command = require('../Command');
 module.exports = new Command({
   name: 'internship',
   description: 'Internship information doc',
-  aliases: [],
+  aliases: ['intern'],
   example: 's!internship',
   permissions: 'general',
   category: 'information',
