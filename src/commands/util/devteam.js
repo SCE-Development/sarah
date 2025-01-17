@@ -3,7 +3,7 @@ const Command = require('../Command');
 
 module.exports = new Command({
   name: 'devteam',
-  description: 'Devteam information doc',
+  description: 'Devteam application form',
   aliases: [],
   example: 's!devteam',
   permissions: 'general',
