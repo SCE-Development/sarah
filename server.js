@@ -13,7 +13,7 @@ const { NewMemberAddHandler } = require('./src/handlers/NewMemberAddHandler');
 const { MemberLeaveHandler } = require('./src/handlers/MemberLeaveHandler');
 const { ReactionHandler } = require ('./src/handlers/ReactionHandler');
 
-const PROMETHEUS_PORT = process.env.PROMETHEUS_PORT || 3000;
+const PROMETHEUS_PORT = process.env.PROMETHEUS_PORT || 9000;
 
 const register = new promClient.Registry();
 promClient.collectDefaultMetrics({ register });
@@ -26,7 +26,10 @@ const server = http.createServer(async (req, res) => {
   res.end(await register.metrics());
 });
 
-server.listen(PROMETHEUS_PORT, () => console.log(`Metrics server started on ${PROMETHEUS_PORT}`))
+server.listen(
+  PROMETHEUS_PORT,
+  () => console.log(`Metrics server started on ${PROMETHEUS_PORT}`),
+);
 
 
 const startBot = async () => {
