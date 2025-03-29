@@ -1,4 +1,6 @@
+const http = require('http');
 const Discord = require('discord.js');
+const promClient = require('prom-client');
 const {
   prefix,
   API_TOKEN,
@@ -10,6 +12,21 @@ const {
 const { NewMemberAddHandler } = require('./src/handlers/NewMemberAddHandler');
 const { MemberLeaveHandler } = require('./src/handlers/MemberLeaveHandler');
 const { ReactionHandler } = require ('./src/handlers/ReactionHandler');
+
+const PROMETHEUS_PORT = process.env.PROMETHEUS_PORT || 3000;
+
+const register = new promClient.Registry();
+promClient.collectDefaultMetrics({ register });
+
+const server = http.createServer(async (req, res) => {
+  if (req.url !== '/metrics') {
+    return res.writeHead(404).end();
+  }
+  res.writeHead(200, { 'Content-Type': register.contentType });
+  res.end(await register.metrics());
+});
+
+server.listen(PROMETHEUS_PORT, () => console.log(`Metrics server started on ${PROMETHEUS_PORT}`))
 
 
 const startBot = async () => {
