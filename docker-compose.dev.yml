@@ -11,8 +11,3 @@ services:
       - ./src:/bot/src
       - ./server.js:/bot/server.js
       - ./config.json:/bot/config.json
-
-networks:
-  default:
-    external:
-      name: sce
