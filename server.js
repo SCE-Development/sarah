@@ -20,7 +20,7 @@ promClient.collectDefaultMetrics({ register });
 
 const server = http.createServer(async (req, res) => {
   if (req.url !== '/metrics') {
-    return res.writeHead(404).end();
+    return res.writeHead(404).end("only GET /metrics allowed");
   }
   res.writeHead(200, { 'Content-Type': register.contentType });
   res.end(await register.metrics());

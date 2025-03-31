@@ -1,9 +1,12 @@
-FROM node:18-alpine3.17
+FROM node:21-alpine
 
 WORKDIR /sarah
 
+# dependencies for node-gyp
+RUN apk add --no-cache python3 make g++ 
+
 COPY package*.json ./
 
-RUN npm install --production
+RUN npm install --omit=dev
 
 CMD [ "npm", "start" ]
