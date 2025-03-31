@@ -1,6 +1,7 @@
 version: '3'
 services:
   sarah:
+    container_name: sarah
     build:
       context: ./
       dockerfile: ./Dockerfile
@@ -10,8 +11,3 @@ services:
       - ./src:/sarah/src
       - ./server.js:/sarah/server.js
       - ./config.json:/sarah/config.json
-
-networks:
-  default:
-    external:
-      name: sce
