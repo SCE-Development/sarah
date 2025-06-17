@@ -10,8 +10,4 @@ services:
       - ./src:/sarah/src
       - ./server.js:/sarah/server.js
       - ./config.json:/sarah/config.json
-
-networks:
-  default:
-    external:
-      name: sce
+      - ./assets:/sarah/assets
