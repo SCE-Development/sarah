@@ -12,17 +12,38 @@ module.exports = new Command({
     execute: async (message, args) => {
         try {
             const sceBackgroundPath = path.join(__dirname, '../../../assets/sce_background.png');
-            const userAvatarURL = message.author.displayAvatarURL({ extension: 'png', size: 256 });
+            const userAvatarURL = message.author.displayAvatarURL({ extension: 'png', size: 512 });
+
+            // Fetch the user's avatar buffer
+            const response = await fetch(userAvatarURL);
+            const userAvatarBuffer = await response.arrayBuffer(); // Use arrayBuffer for Sharp
+
+            // --- Process and resize the user avatar ---
+            const avatar = sharp(Buffer.from(userAvatarBuffer));
+
+            // Define the desired size for the avatar on the final image
+            const desiredAvatarWidth = 512; // Adjust as needed
+            const desiredAvatarHeight = 512; // Adjust as needed (or keep aspect ratio)
+
+            // Resize the avatar
+            const resizedAvatarBuffer = await avatar
+                .resize(desiredAvatarWidth, desiredAvatarHeight)
+                .toBuffer();
+
+            // --- Calculate position to center the avatar on the background ---
+            const backgroundMetadata = await sharp(sceBackgroundPath).metadata();
+            const avatarX = Math.floor((backgroundMetadata.width / 2) - (desiredAvatarWidth / 2));
+            const avatarY = Math.floor((backgroundMetadata.height / 2) - (desiredAvatarHeight / 2));
 
             // Create the composite image
             const outputBuffer = await sharp(sceBackgroundPath)
                 .composite([
                     {
-                        input: Buffer.from(userAvatarBuffer), // Convert ArrayBuffer to Buffer
+                        input: Buffer.from(resizedAvatarBuffer), // Convert ArrayBuffer to Buffer
                         // Positioning of the avatar on the background
                         // Example: Centering the avatar
-                        left: Math.floor((await sharp(sceBackgroundPath).metadata()).width / 2 - 128 / 2),
-                        top: Math.floor((await sharp(sceBackgroundPath).metadata()).height / 2 - 128 / 2),
+                        left: avatarX,
+                        top: avatarY,
                         blend: 'over', // or 'over' or other blend modes
                         gravity: 'center', // You can also use gravity for positioning
                     }
@@ -31,7 +52,7 @@ module.exports = new Command({
                 .toBuffer();
 
             message.channel.send({
-                content: `Welcome to SCE <@${message.author.id}>!\n` + responseText,
+                content: `Welcome to SCE <@${message.author.id}>!\n`,
                 files: [{ attachment: outputBuffer, name: 'pfp_with_sce_background_sharp.png' }],
             });
 
