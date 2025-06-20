@@ -24,7 +24,7 @@ class NewMemberAddHandler {
       // Create a canvas
 
       // build from background image
-      const backgroundImage = await Canvas.loadImage("../../assets/sce_background.png");
+      const backgroundImage = await Canvas.loadImage("/sarah/assets/sce_background.png");
 
       // Get the dimensions from the loaded background image
       const canvasWidth = backgroundImage.width;
