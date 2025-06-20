@@ -1,4 +1,5 @@
 const config = require('../../config.json');
+const logger = require('../util/logger');
 
 /**
  * Class which handles a member leaving the server
@@ -23,10 +24,10 @@ class MemberLeaveHandler {
       if (leaveChannel) {
         await leaveChannel.send(message);
       } else {
-        console.log('Leave channel not found');
+        logger.warn('Leave channel not found');
       }
     } catch (e) {
-      console.error('Error in handleMemberLeave:', e);
+      logger.error('Error in handleMemberLeave:', e);
     }
   }
 }

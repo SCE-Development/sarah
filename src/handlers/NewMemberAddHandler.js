@@ -1,5 +1,6 @@
 const config = require('../../config.json');
 const Canvas = require('@napi-rs/canvas');
+const logger = require('../util/logger');
 const { request } = require('undici');
 
 const { AttachmentBuilder } = require('discord.js');
@@ -54,7 +55,7 @@ class NewMemberAddHandler {
           files: [attachment]
         });
       } else {
-        console.log('Welcome channel not found');
+        logger.warn('Welcome channel not found');
       }
 
       // assign new member default roles
@@ -65,7 +66,7 @@ class NewMemberAddHandler {
         }
       });
     } catch (e) {
-      console.error(e);
+      logger.error(e);
     }
   }
 }
