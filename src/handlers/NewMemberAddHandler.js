@@ -45,8 +45,8 @@ class NewMemberAddHandler {
       const avatar = await Canvas.loadImage(await body.arrayBuffer());
       const avatarX = 512;
       const avatarY = 512;
-      const x = (canvasWidth - avatarX) / 2
-      const y = (canvasHeight - avatarY) / 2
+      const x = (canvasWidth - avatarX) / 2;
+      const y = (canvasHeight - avatarY) / 2;
       ctx.drawImage(avatar, x, y, avatarX, avatarY);
 
       const buffer = await canvas.encode('png');
