@@ -31,7 +31,7 @@ class NewMemberAddHandler {
       const canvasHeight = backgroundImage.height;
 
       // Create a new canvas with the background image's dimensions
-      const canvas = createCanvas(canvasWidth, canvasHeight);
+      const canvas = Canvas.createCanvas(canvasWidth, canvasHeight);
       const ctx = canvas.getContext('2d');
 
       // Draw the background image to fill the entire canvas
