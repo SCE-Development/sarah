@@ -21,6 +21,6 @@ jobs:
       with:
         node-version: 16
         cache: 'npm'
-    - name: install dependencies if cache miss
+    - name: install dependencies
       run: npm ci --ignore-scripts
     - run: npm run lint
