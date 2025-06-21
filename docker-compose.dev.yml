@@ -11,3 +11,4 @@ services:
       - ./src:/sarah/src
       - ./server.js:/sarah/server.js
       - ./config.json:/sarah/config.json
+      - ./assets:/sarah/assets
