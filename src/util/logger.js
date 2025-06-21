@@ -36,7 +36,8 @@ function printToConsole(logLevel, ...message){
   } else if (logLevel === LOG_LEVEL.WARNING) {
     maybeColor = TERMINAL_COLOR.YELLOW;
   }
-  const formattedMessage = `${maybeColor}${dateInUtc} ${logLevel}:${getLineOfCode()} ${args} ${TERMINAL_COLOR.DEFAULT}`;
+  const formattedMessage = `${maybeColor}${dateInUtc} ${logLevel}:${getLineOfCode()} ` +
+  `${args} ${TERMINAL_COLOR.DEFAULT}`;
   console.log(formattedMessage);
 }
 
