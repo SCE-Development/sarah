@@ -1,5 +1,6 @@
 const handlersPath = '.';
 const utilPath = '../util';
+const logger = require('../util/logger');
 
 const { CommandHandler } = require(handlersPath + '/CommandHandler');
 const { NonPrefixHandler } = require(handlersPath + '/NonPrefixHandler');
@@ -52,7 +53,7 @@ class MessageHandler {
         this.nonPrefixHandler.handleCommand(message);
       }
     } catch (e) {
-      console.error(e);
+      logger.error(e);
     }
   }
 }

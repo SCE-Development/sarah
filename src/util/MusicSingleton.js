@@ -9,6 +9,7 @@ const {
 const { EmbedBuilder } = require('discord.js');
 
 const ytdl = require('@distube/ytdl-core');
+const logger = require('./logger');
 
 // see https://stackoverflow.com/a/59626464
 class MusicSingleton {
@@ -39,7 +40,9 @@ class MusicSingleton {
       this.stop();
       this.setIsBotConnectedToChannel(false);
     });
-    this.audioPlayer.on('error', console.error);
+    this.audioPlayer.on('error', (error) => {
+      logger.error('Audio player encountered an error:', error);
+    });
   }
 
   async announceNowPlaying(originalThis) {
@@ -251,7 +254,7 @@ class MusicSingleton {
       }
       return true;
     } catch (e) {
-      console.error('couldnt play song:', e);
+      logger.error('couldnt play song:', e);
       return false;
     }
   }

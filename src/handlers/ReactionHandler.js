@@ -1,5 +1,6 @@
 const { REACTIONS = {} } = require('../../config.json');
 const { EmbedBuilder } = require('discord.js');
+const logger = require('../util/logger');
 /**
 * Add a reaction handler to the handler list.
 * @param {Message} message - The message to add reaction to.
@@ -54,7 +55,7 @@ class ReactionHandler {
       );
       await member.send({embeds: [embed]});
     } catch (e) {
-      console.log('Role does not exist', e);
+      logger.warn('Role does not exist', e);
     }
   }
 }

@@ -1,6 +1,7 @@
 const http = require('http');
 const Discord = require('discord.js');
 const promClient = require('prom-client');
+const logger = require('./src/util/logger');
 const {
   prefix,
   API_TOKEN,
@@ -28,7 +29,7 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(
   PROMETHEUS_PORT,
-  () => console.log(`Metrics server started on ${PROMETHEUS_PORT}`),
+  () => logger.info(`Metrics server started on ${PROMETHEUS_PORT}`),
 );
 
 
@@ -62,7 +63,7 @@ const startBot = async () => {
         type: 'LISTENING',
       },
     });
-    console.log('Discord bot live');
+    logger.info('Discord bot live');
   });
 
   client.on('messageCreate', (message) => {
