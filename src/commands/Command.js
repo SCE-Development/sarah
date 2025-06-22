@@ -1,5 +1,6 @@
 const { ERROR_CHANNEL_ID = null } = require('../../config.json');
 const { EmbedBuilder } = require('discord.js');
+const logger = require('../util/logger');
 const util = require('util');
 
 /**
@@ -12,7 +13,7 @@ const util = require('util');
  */
 function logError(message, error) {
   try {
-    console.error(error);
+    logger.error(error);
     const channel = message.client.channels.cache.find(
       channel => channel.id === ERROR_CHANNEL_ID
     );
@@ -37,7 +38,7 @@ function logError(message, error) {
     // For some reason if the above code throws a new error, we need
     // to catch it so we dont crash the bot. When this happens log
     // both errors to stderr.
-    console.error(
+    logger.error(
       'while handling the above error, another error occurred:',
       anotherError,
     );
