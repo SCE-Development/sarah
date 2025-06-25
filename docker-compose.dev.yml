@@ -1,4 +1,4 @@
-version: '3'
+# version: '3'
 services:
   sarah:
     container_name: sarah
