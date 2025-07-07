@@ -60,7 +60,7 @@ module.exports = new Command({
         // replying to the user in the server
           .setDescription(`uhhhhhh ${memberName} mamacita, ` + 
             'i can\'t dm you,,,,,, can you check your settings')
-            // with an appropriate gif
+        // with an appropriate gif
           .setImage('https://media0.giphy.com/media/v1.Y2lkPTc5' +
             'MGI3NjExcDkzbWdqNDU5NDl2ZGNsZDRxOWc4bDlsejIwZHJvaXB' +
             'wdzJua3hydCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw' +
@@ -68,5 +68,5 @@ module.exports = new Command({
         return await message.reply({embeds: [replyEmbed]});
       }
     }
-    }
+  }
 });
