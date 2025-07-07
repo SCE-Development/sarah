@@ -134,7 +134,8 @@ const startBot = async () => {
     const guild = client.guilds.cache.get(guildId);
 
     if (!guild) {
-      return interaction.reply({ content: 'Guild not found.', ephemeral: true });
+      return interaction.reply({ content: 'Guild not found.', 
+        ephemeral: true });
     }
 
     try {
@@ -145,19 +146,23 @@ const startBot = async () => {
       const role = guild.roles.cache.get(roleId);
 
       if (!role) {
-        return interaction.reply({ content: 'Role not found.', ephemeral: true });
+        return interaction.reply({ content: 'Role not found.', 
+          ephemeral: true });
       }
 
       if (member.roles.cache.has(roleId)) {
         await member.roles.remove(role);
-        await interaction.reply({ content: `Removed the role **${role.name}** from you.`, ephemeral: true });
+        await interaction.reply({ content: `Removed the role ` + 
+          `**${role.name}** from you.`, ephemeral: true });
       } else {
         await member.roles.add(role);
-        await interaction.reply({ content: `Added the role **${role.name}** to you.`, ephemeral: true });
+        await interaction.reply({ content: `Added the role ` + 
+          `**${role.name}** to you.`, ephemeral: true });
       }
     } catch (error) {
       console.error(error);
-      await interaction.reply({ content: 'There was an error while updating your roles.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error while' +
+        'updating your roles.', ephemeral: true });
     }});
   client.login(API_TOKEN);
 };

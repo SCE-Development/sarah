@@ -16,9 +16,9 @@ class NewMemberAddHandler {
    * Function that handles a new member joining the server
    * @param {GuildMember} newMember The new member in the server
    */
-  //newMember is a GuildMember object
-  //won't anyone say what the object is......
-  //T_T
+  // newMember is a GuildMember object
+  // won't anyone say what the object is......
+  // T_T
   async handleNewMember(newMember) {
     try {
       const guild = newMember.guild;
@@ -97,7 +97,7 @@ class NewMemberAddHandler {
 
         // make an embed, which is what we will send to the new user's dms
         const embed = new EmbedBuilder()
-          .setTitle(`Who is this diva!!? Welcome to the SCE Discord `+ 
+          .setTitle('Who is this diva!!? Welcome to the SCE Discord ' + 
             `Server ${memberName}!`)
           .setDescription('psssst.... hey queen......' + 
             'click on the button to verify yourself......' +
@@ -123,7 +123,7 @@ class NewMemberAddHandler {
 
         // if successful, the bot will @user to check their dms
         await welcomeChannel.send(`<@${newMember.user.id}> ` +
-          `mamacita check your dm`);
+          'mamacita check your dm');
       } catch (e) {
         console.log(e);
 
@@ -143,8 +143,8 @@ class NewMemberAddHandler {
           // sends the embed into the channel
           await welcomeChannel.send({content: `uhhhhhh` + 
             `<@${newMember.user.id}> ` +
-            `mamacita, i can't dm you,,,,,, can you check your ` + 
-            `settings,,,, and then also go r!verify in the ` + 
+            'mamacita, i can\'t dm you,,,,,, can you check your ' + 
+            'settings,,,, and then also go r!verify in the ' + 
             `chat for me`, embeds: [replyEmbed]});
         }
       }

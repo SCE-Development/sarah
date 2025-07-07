@@ -43,12 +43,14 @@ class ReactionHandler {
 
     const guildName = reaction.message.guild.name;
     const emoji = reaction.emoji.name;
+    const reactionWasRemoved = reactionWasRemoved;
 
 
     try {
       // roles.cache.get(roleId) will give you the whole role 
       // object from the role id
-      const role = reaction.message.guild.roles.cache.get(REACTIONS[reaction.message.id][emoji]);
+      const role = reaction.message.guild.roles
+        .cache.get(REACTIONS[reaction.message.id][emoji]);
 
       // makes an embed with our message
       const embed = new EmbedBuilder()
