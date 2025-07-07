@@ -89,7 +89,7 @@ class NewMemberAddHandler {
       try {
 
         // gets the username of the new member
-        let memberName = newMember.user.username
+        let memberName = newMember.user.username;
       
         // this will get the role object by using the role id for
         // the verified role which will be in config.json hopefully
@@ -105,17 +105,17 @@ class NewMemberAddHandler {
           .setFooter({
             text: 'Sent by the Sarah bot' +
             `on behalf of the server, ${guildName}`
-            });
+          });
 
         // makes a button, with the name of the verified role
         const button = new ButtonBuilder()
-            .setCustomId(`role_toggle_${role.id}`)
-            .setLabel(role.name)
-            .setStyle(ButtonStyle.Primary);
+          .setCustomId(`role_toggle_${role.id}`)
+          .setLabel(role.name)
+          .setStyle(ButtonStyle.Primary);
         
         // adds the button to an action row
         const row = new ActionRowBuilder()
-            .addComponents(button);
+          .addComponents(button);
 
         // sends the embed and the action row with the button to
         // verify the user to their dms
@@ -141,11 +141,11 @@ class NewMemberAddHandler {
               'hydCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/YAnpMSHcu' +
               'rJVS/giphy.gif');
           // sends the embed into the channel
-          await welcomeChannel.send({content: `uhhhhhh` + 
+          await welcomeChannel.send({content: 'uhhhhh' + 
             `<@${newMember.user.id}> ` +
             'mamacita, i can\'t dm you,,,,,, can you check your ' + 
             'settings,,,, and then also go r!verify in the ' + 
-            `chat for me`, embeds: [replyEmbed]});
+            'chat for me', embeds: [replyEmbed]});
         }
       }
     } catch (e) {

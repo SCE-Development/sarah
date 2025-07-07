@@ -152,11 +152,11 @@ const startBot = async () => {
 
       if (member.roles.cache.has(roleId)) {
         await member.roles.remove(role);
-        await interaction.reply({ content: `Removed the role ` + 
+        await interaction.reply({ content: 'Removed the role ' + 
           `**${role.name}** from you.`, ephemeral: true });
       } else {
         await member.roles.add(role);
-        await interaction.reply({ content: `Added the role ` + 
+        await interaction.reply({ content: 'Added the role ' + 
           `**${role.name}** to you.`, ephemeral: true });
       }
     } catch (error) {

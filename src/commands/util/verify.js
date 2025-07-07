@@ -9,8 +9,7 @@ module.exports = new Command({
   example: 'r!verify',
   permissions: 'general',
   category: 'information',
-  execute: async(message, args) => {
-    const args = args;
+  execute: async(message) => {
     // this will return a GuildMember object
     const member = message.member;
 

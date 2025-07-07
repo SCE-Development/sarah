@@ -30,6 +30,9 @@ class ReactionHandler {
     if (!REACTIONS[reaction.message.id]) {
       return;
     }
+    if (reactionWasRemoved === true) {
+      return;
+    }
     // what dis function needs to do is
     // find the user
     // make an embed with a message such as 
@@ -43,8 +46,6 @@ class ReactionHandler {
 
     const guildName = reaction.message.guild.name;
     const emoji = reaction.emoji.name;
-    const reactionWasRemoved = reactionWasRemoved;
-
 
     try {
       // roles.cache.get(roleId) will give you the whole role 
