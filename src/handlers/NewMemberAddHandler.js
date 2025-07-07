@@ -1,7 +1,8 @@
 const config = require('../../config.json');
 const Canvas = require('@napi-rs/canvas');
 const logger = require('../util/logger');
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, 
+  ButtonStyle } = require('discord.js');
 const { request } = require('undici');
 
 const { AttachmentBuilder } = require('discord.js');
@@ -87,16 +88,17 @@ class NewMemberAddHandler {
       
       try {
 
-        //gets the username of the new member
+        // gets the username of the new member
         let memberName = newMember.user.username
       
-        //this will get the role object by using the role id for
-        //the verified role which will be in config.json hopefully
+        // this will get the role object by using the role id for
+        // the verified role which will be in config.json hopefully
         const role = guild.roles.cache.get(config.verifiedRoleId);
 
-        //make an embed, which is what we will send to the new user's dms
+        // make an embed, which is what we will send to the new user's dms
         const embed = new EmbedBuilder()
-          .setTitle(`Who is this diva!!? Welcome to the SCE Discord Server ${memberName}!`)
+          .setTitle(`Who is this diva!!? Welcome to the SCE Discord `+ 
+            `Server ${memberName}!`)
           .setDescription('psssst.... hey queen......' + 
             'click on the button to verify yourself......' +
             'and get access to the rest of the server')
@@ -105,34 +107,42 @@ class NewMemberAddHandler {
             `on behalf of the server, ${guildName}`
             });
 
-        //makes a button, with the name of the verified role
+        // makes a button, with the name of the verified role
         const button = new ButtonBuilder()
             .setCustomId(`role_toggle_${role.id}`)
             .setLabel(role.name)
             .setStyle(ButtonStyle.Primary);
         
-        //adds the button to an action row
+        // adds the button to an action row
         const row = new ActionRowBuilder()
             .addComponents(button);
 
-        //sends the embed and the action row with the button to verify the user to their dms
+        // sends the embed and the action row with the button to
+        // verify the user to their dms
         await newMember.send({embeds: [embed], components: [row]});
 
-        //if successful, the bot will @user to check their dms
-        await welcomeChannel.send(`<@${newMember.user.id}> mamacita check your dm`);
+        // if successful, the bot will @user to check their dms
+        await welcomeChannel.send(`<@${newMember.user.id}> ` +
+          `mamacita check your dm`);
       } catch (e) {
         console.log(e);
 
-        //the 50007 error code is when the bot doesn't have permission to dm the user
+        // the 50007 error code is when the bot doesn't have 
+        // permission to dm the user
         if (e.code === 50007) {
-          //in that case make an embed
+          // in that case make an embed
           const replyEmbed = new EmbedBuilder()
-            //attach a message that @'s the new member and tells them
-            //that the bot cannot dm them
-            //.setDescription(`uhhhhhh <@${newMember.user.id}> mamacita, i can't dm you,,,,,, can you check your settings`)
-            .setImage('https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExcDkzbWdqNDU5NDl2ZGNsZDRxOWc4bDlsejIwZHJvaXBwdzJua3hydCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/YAnpMSHcurJVS/giphy.gif');
-          //sends the embed into the channel
-          await welcomeChannel.send({content: `uhhhhhh <@${newMember.user.id}> ` +
+            // attach a message that @'s the new member and tells them
+            // that the bot cannot dm them
+            // .setDescription(`uhhhhhh <@${newMember.user.id}> mamacita, 
+            // i can't dm you,,,,,, can you check your settings`)
+            .setImage('https://media0.giphy.com/media/v1.Y2lkPTc5MGI3' + 
+              'NjExcDkzbWdqNDU5NDl2ZGNsZDRxOWc4bDlsejIwZHJvaXBwdzJua3' +
+              'hydCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/YAnpMSHcu' +
+              'rJVS/giphy.gif');
+          // sends the embed into the channel
+          await welcomeChannel.send({content: `uhhhhhh` + 
+            `<@${newMember.user.id}> ` +
             `mamacita, i can't dm you,,,,,, can you check your ` + 
             `settings,,,, and then also go r!verify in the ` + 
             `chat for me`, embeds: [replyEmbed]});

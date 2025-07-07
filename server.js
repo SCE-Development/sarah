@@ -57,8 +57,9 @@ const startBot = async () => {
   const vcChangeHandler = new VoiceChannelChangeHandler();
   const newMemberHandler = new NewMemberAddHandler();
   const memberLeaveHandler = new MemberLeaveHandler();
-  //creating a new ReactionHandler object
-  //we can call the methods defined in the ReactionHandler class by calling them on the reactionHandler object
+  // creating a new ReactionHandler object
+  // we can call the methods defined in the ReactionHandler class by 
+  // calling them on the reactionHandler object
   const reactionHandler = new ReactionHandler();
   client.once('ready', () => {
     messageHandler.initialize();
@@ -79,7 +80,7 @@ const startBot = async () => {
     vcChangeHandler.handleChangeMemberInVoiceChannel(oldState, newState);
   });
 
-  //newMember is a GuildMember object
+  // newMember is a GuildMember object
   client.on('guildMemberAdd', (newMember) => {
     newMemberHandler.handleNewMember(newMember);
   });
@@ -87,22 +88,26 @@ const startBot = async () => {
   client.on('guildMemberRemove', (member) => {
     memberLeaveHandler.handleMemberLeave(member);
   });
-  //client.on basically triggers a function whenever an event happens
-  //checks to see if a reaction has been added to a message in the server
-  //whenever a messageReactionAdd event happens
-  //Discord.js sends MessageReaction object, and User object
-  //into our specified function
-  //passes in the MessageReaction object and User object containing data
-  //the reaction and the user are passed into the handleReaction method
-  //from the reactionHandler class
+  // client.on basically triggers a function whenever an event happens
+  // checks to see if a reaction has been added to a message in the server
+  // whenever a messageReactionAdd event happens
+  // Discord.js sends MessageReaction object, and User object
+  // into our specified function
+  // passes in the MessageReaction object and User object containing data
+  // the reaction and the user are passed into the handleReaction method
+  // from the reactionHandler class
 
-  //we can use reaction.message, to get the message object, or reaction.emoji
-  //we can use message.id, or message.content, to access information about the message
-  //user is a User object, and contains information about the person that reacted
-  //we can use user.id or user.username on the User object
-  //everything is a json........... MessageReaction...... User......... Message........
-  //what if WE yes me and you are jsons too......... 
-  //look at the love inside my heart for you with JSON.stringify(me.heart) vro.......
+  // we can use reaction.message, to get the message object, or reaction.emoji
+  // we can use message.id, or message.content, to access information about 
+  // the message
+  // user is a User object, and contains information about the person 
+  // that reacted
+  // we can use user.id or user.username on the User object
+  // everything is a json........... MessageReaction...... User......... 
+  // Message........
+  // what if WE yes me and you are jsons too......... 
+  // look at the love inside my heart for you with 
+  // JSON.stringify(me.heart) vro.......
 
   client.on('messageReactionAdd', async (reaction, user) => {
     const botpfp = client.user.displayAvatarURL();
