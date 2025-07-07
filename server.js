@@ -79,6 +79,7 @@ const startBot = async () => {
     vcChangeHandler.handleChangeMemberInVoiceChannel(oldState, newState);
   });
 
+  //newMember is a GuildMember object
   client.on('guildMemberAdd', (newMember) => {
     newMemberHandler.handleNewMember(newMember);
   });

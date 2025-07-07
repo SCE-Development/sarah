@@ -24,8 +24,8 @@ module.exports = new Command({
             //gets the role object by its id
             const role = message.guild.roles.cache.get("831500120558010378");
             const embed = new EmbedBuilder()
-                .setTitle(`Hey ${memberName} Queen! Welcome to the SCE Discord Server!`)
-                .setDescription('psssst.... hey kid......' + 'click on the button for a role......')
+                .setTitle(`Who is this diva!?? Welcome to the SCE Discord Server ${memberName}!`)
+                .setDescription('psssst.... hey queen......' + 'click on the button to verify yourself and get access to the rest of the server......')
                 //.setImage('https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExc2pqbzFqbHdhbmU1eWw4eHFxenZuajc2dnY4NDY0dG44b2Y2MHgxNCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlSH2gsSrxJySnS/giphy.gif')
                 .setFooter({
                 text: 'Sent by the Reaction Roles bot' +
