@@ -1,5 +1,5 @@
 const Command = require('../Command');
-const config = require('../../config.json')
+const config = require('../../config.json');
 const { EmbedBuilder, ActionRowBuilder, 
   ButtonBuilder, ButtonStyle } = require('discord.js');
 
