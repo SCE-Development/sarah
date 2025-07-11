@@ -1,6 +1,8 @@
 const Command = require('../Command');
+const config = require('../../config.json')
 const { EmbedBuilder, ActionRowBuilder, 
   ButtonBuilder, ButtonStyle } = require('discord.js');
+
 
 module.exports = new Command({
   name: 'verify',
@@ -23,7 +25,7 @@ module.exports = new Command({
     // const botpfp = client.user.displayAvatarURL();
     try {
       // gets the role object by its id
-      const role = message.guild.roles.cache.get('831500120558010378');
+      const role = message.guild.roles.cache.get(config.verifiedRoleId);
       const embed = new EmbedBuilder()
         .setTitle('Who is this diva!?? Welcome to the' + `
           SCE Discord Server ${memberName}!`)
