@@ -142,7 +142,7 @@ class NewMemberAddHandler {
           await welcomeChannel.send({content: 'uhhhhh' + 
             `<@${newMember.user.id}> ` +
             'mamacita, i can\'t dm you,,,,,, can you check your ' + 
-            `settings,,,, and then also go ${config.prefix}!verify in the ` + 
+            `settings,,,, and then also go ${config.prefix}verify in the ` + 
             'chat for me', embeds: [replyEmbed]});
         }
       }
