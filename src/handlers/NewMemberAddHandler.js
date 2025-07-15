@@ -122,8 +122,6 @@ class NewMemberAddHandler {
         await newMember.send({embeds: [embed], components: [row]});
 
         // if successful, the bot will @user to check their dms
-        await welcomeChannel.send(`<@${newMember.user.id}> ` +
-          'mamacita check your dm');
       } catch (e) {
         console.log(e);
 
@@ -144,7 +142,7 @@ class NewMemberAddHandler {
           await welcomeChannel.send({content: 'uhhhhh' + 
             `<@${newMember.user.id}> ` +
             'mamacita, i can\'t dm you,,,,,, can you check your ' + 
-            'settings,,,, and then also go r!verify in the ' + 
+            `settings,,,, and then also go ${config.prefix}!verify in the ` + 
             'chat for me', embeds: [replyEmbed]});
         }
       }
