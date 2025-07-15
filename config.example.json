@@ -10,5 +10,11 @@
     "MESSAGE_ID": {
       "EMOJI": "ROLE_ID"
     }
-  }
+  },
+  "verifiedRoleId": "xxxxxxxxxx",
+  "WELCOME": {
+    "NEW_MEMBER_CHANNEL_ID": "xxxxxxxxxxx"
+  },
+  "guildId": "xxxxxxxxxx"
+
 }
