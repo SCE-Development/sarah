@@ -7,6 +7,10 @@ RUN apk add --no-cache python3 make g++
 
 COPY package*.json ./
 
-RUN npm install --omit=dev
+# we use NPM_INSTALL_ARGS to add --omit=dev
+# when running the real discord bot
+ARG NPM_INSTALL_ARGS
+
+RUN npm install $NPM_INSTALL_ARGS
 
 CMD [ "npm", "start" ]
