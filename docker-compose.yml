@@ -4,6 +4,8 @@ services:
     build:
       context: ./
       dockerfile: ./Dockerfile
+      args:
+        NPM_INSTALL_ARGS: "--omit=dev"
     restart: always
     volumes:
       - ./api:/sarah/api
