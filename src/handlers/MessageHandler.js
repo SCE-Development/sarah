@@ -1,10 +1,12 @@
 const handlersPath = '.';
 const utilPath = '../util';
 const logger = require('../util/logger');
+const config = require('../../config.json');
 
 const { CommandHandler } = require(handlersPath + '/CommandHandler');
 const { NonPrefixHandler } = require(handlersPath + '/NonPrefixHandler');
 const { createNonPrefixRegex } = require(utilPath + '/NonPrefixRegexCreator');
+const { ScamDetector } = require(utilPath + '/ScamDetector');
 
 /**
  * Class which handles interpreting an input message and invoking the correct
@@ -22,6 +24,7 @@ class MessageHandler {
     this.prefix = prefix;
     this.commandHandler = new CommandHandler();
     this.nonPrefixHandler = new NonPrefixHandler();
+    this.scamDetector = new ScamDetector();
   }
 
   /**
@@ -40,13 +43,20 @@ class MessageHandler {
    * @param {string} message An event triggered by a user's input.
    * Ignores message if the author is a bot
    */
-  handleMessage(message) {
+  async handleMessage(message) {
     try {
       // Add a botStartTime field to the message object
       message.botStartTime = this.startTime;
       if (message.author.bot) {
         return;
       }
+
+      // Check for scam messages first
+      if (this.scamDetector.isScamMessage(message.content)) {
+        await this.scamDetector.handleScamMessage(message, config.jailRoleId);
+        return;
+      }
+
       if (message.content.startsWith(this.prefix)) {
         this.commandHandler.handleCommand(this.prefix, message);
       } else if (this.nonPrefixRegex.test(message.content)) {
