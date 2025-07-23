@@ -53,7 +53,9 @@ class MessageHandler {
 
       // Check for scam messages first
       if (this.scamDetector.isScamMessage(message.content)) {
-        await this.scamDetector.handleScamMessage(message, config.jailRoleId);
+        await this.scamDetector.handleScamMessage(
+          message, config.jailRoleId, config.SCAM_LOG_CHANNEL_ID
+        );
         return;
       }
 

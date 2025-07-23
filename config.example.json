@@ -4,6 +4,7 @@
   "prefix": "s!",
   "SCE_API_URL": "http://sce.engr.sjsu.edu",
   "ERROR_CHANNEL_ID": "xxxxxxxxxxxxxx",
+  "SCAM_LOG_CHANNEL_ID": "xxxxxxxxxxxxxx",
   "CORE_V4_API_KEY": "xxxxxxxxxxxxxx",
   "DEFAULT_ROLES": [],
   "REACTIONS": {
