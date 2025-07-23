@@ -1,4 +1,5 @@
 const logger = require('./logger');
+const { EmbedBuilder } = require('discord.js');
 
 class ScamDetector {
   constructor() {
@@ -42,7 +43,7 @@ class ScamDetector {
     }
   }
 
-  async handleScamMessage(message, jailRoleId) {
+  async handleScamMessage(message, jailRoleId, scamLogChannelId) {
     try {
       const member = message.member;
       if (!member) {
@@ -51,6 +52,8 @@ class ScamDetector {
       }
 
       const jailRole = message.guild.roles.cache.get(jailRoleId);
+      const scamLogChannel = message.guild.channels.cache.get(scamLogChannelId);
+
       if (!jailRole) {
         logger.error(`Jail role not found: ${jailRoleId}`);
         return false;
@@ -60,6 +63,19 @@ class ScamDetector {
       await message.delete();
       
       logger.info(`Jailed user ${member.user.tag} for potential scam message`);
+      if (scamLogChannel) {
+        const scamEmbed = new EmbedBuilder()
+          .setColor(0xff0000)
+          .setTitle('Scam Message Detected')
+          .addFields(
+            { name: 'User', value: `<@${member.user.id}>`, inline: true },
+            { name: 'Message', value: message.content.slice(0, 1024) }
+          )
+          .setTimestamp();
+        await scamLogChannel.send({ embeds: [scamEmbed] });
+      } else {
+        logger.warn('Scam log channel not found');
+      }
       return true;
     } catch (error) {
       logger.error('Error handling scam message:', error);
