@@ -42,7 +42,7 @@ class ScamDetector {
       return false;
     }
   }
-
+  
   async handleScamMessage(message, jailRoleId, scamLogChannelId) {
     try {
       const member = message.member;
@@ -53,7 +53,6 @@ class ScamDetector {
 
       const jailRole = message.guild.roles.cache.get(jailRoleId);
       const scamLogChannel = message.guild.channels.cache.get(scamLogChannelId);
-
       if (!jailRole) {
         logger.error(`Jail role not found: ${jailRoleId}`);
         return false;
