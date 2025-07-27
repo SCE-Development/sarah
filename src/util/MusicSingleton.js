@@ -188,6 +188,24 @@ class MusicSingleton {
     }
   }
 
+  queue() {
+    const queue = this.upcoming
+      .slice(0, 10)
+      .map((song, index) => `${index}. ${song.metadata.title}`
+      ).join('\n');
+    const embeddedQueue = new EmbedBuilder()
+      .setColor(0x0099FF)
+      .setAuthor({ name: 'Queue' })
+      .setTitle(queue)
+      .setFooter(
+        {
+          text: `Requested by ${this._currentMessage.author.username}`,
+          iconURL: `${this._currentMessage.author.displayAvatarURL()}`
+        }
+      );
+    this._currentMessage.channel.send({ embeds: [embeddedQueue] });
+  }
+
   // Assumes sent url is valid YouTube URL
   async playOrAddYouTubeUrlToQueue(message, url, repetitions = 1) {
     try {
