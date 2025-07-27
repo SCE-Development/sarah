@@ -187,7 +187,7 @@ class MusicSingleton {
       this.announceNowPlaying(this);
     }
   }
-
+  
   remove(message, index) {
     if (!message.member.voice.channel) {
       return message.reply('Please join a voice channel first!');
@@ -213,6 +213,18 @@ class MusicSingleton {
         }
       );
     this._currentMessage.channel.send({ embeds: [embeddedRemove] });
+  }
+
+  queue() {
+    const queue = this.upcoming
+      .slice(0, 10)
+      .map((song, index) => `${index}. ${song.metadata.title}`
+      ).join('\n');
+    const embeddedQueue = new EmbedBuilder()
+      .setColor(0x0099FF)
+      .setAuthor({ name: 'Queue' })
+      .setTitle(queue)
+    this._currentMessage.channel.send({ embeds: [embeddedQueue] });
   }
 
   // Assumes sent url is valid YouTube URL
