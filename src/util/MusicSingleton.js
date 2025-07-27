@@ -188,7 +188,10 @@ class MusicSingleton {
     }
   }
 
-  queue() {
+  queue(message) {
+    if (this.upcoming.length === 0) {
+      return message.reply('There\'s nothing in the queue...')
+    }
     const queue = this.upcoming
       .slice(0, 10)
       .map((song, index) => `${index}. ${song.metadata.title}`
