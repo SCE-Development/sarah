@@ -188,6 +188,35 @@ class MusicSingleton {
     }
   }
 
+  remove(message, index = 0) {
+    if (!message.member.voice.channel) {
+      return message.reply('Please join a voice channel first!');
+    }
+    if (index < 0) {
+      return message.reply('That\'s not a valid position in the queue!');
+    }
+    if (index === 0) { // requested to skip current song -> skip current song
+      this.skip(message);
+      return message.reply('Skipped the current song');
+    }
+    index--; // make upcoming array 0 indexed
+    if (index >= this.upcoming.length) {
+      return message.reply('There aren\'t that many songs in the queue...');
+    }
+    const song = this.upcoming[index].metadata.title;
+    this.upcoming.splice(index, 1);
+    const embeddedRemove = new EmbedBuilder()
+      .setColor(0x0099FF)
+      .setAuthor({ name: `Removed ${song} from the queue` })
+      .setFooter(
+        {
+          text: `Requested by ${this._currentMessage.author.username}`,
+          iconURL: `${this._currentMessage.author.displayAvatarURL()}`
+        }
+      );
+    this._currentMessage.channel.send({ embeds: [embeddedRemove] });
+  }
+
   // Assumes sent url is valid YouTube URL
   async playOrAddYouTubeUrlToQueue(message, url, repetitions = 1) {
     try {
