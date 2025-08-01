@@ -7,7 +7,7 @@ class ScamDetector {
     this.scamKeywords = [
       'free',
       'new',
-      'first come first serve',
+      'first',
       'dm',
       'pm',
       'macbook',
@@ -20,7 +20,11 @@ class ScamDetector {
       'ticket',
       'tickets',
       'concert',
-      'call'
+      'call',
+      'come',
+      'serve',
+      'giving away',
+      'giveaway',
     ];
   }
 
