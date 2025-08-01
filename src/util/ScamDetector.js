@@ -47,7 +47,6 @@ class ScamDetector {
       return false;
     }
   }
-  
   async handleScamMessage(message, jailRoleId, scamLogChannelId) {
     try {
       const member = message.member;
