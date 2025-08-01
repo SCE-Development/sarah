@@ -64,40 +64,41 @@ class ScamDetector {
         return false;
       }
 
+      if (!scamLogChannel) {
+        logger.warn('Scam log channel not found');
+        return false;
+      } 
+
       await member.roles.add(jailRole);
       await message.delete();
       
       logger.info(`Jailed user ${member.user.tag} for potential scam message`);
 
-      if (!scamLogChannel) {
-        logger.warn('Scam log channel not found');
-        return false;
-      } else {
+
       
-        const scamEmbed = new EmbedBuilder()
-          .setColor(0xff0000)
-          .setTitle('Scam Message Detected')
-          .addFields(
-            { name: 'User', value: `<@${member.user.id}>`, inline: true },
-            { name: 'Message', value: message.content.slice(0, 1024) }
-          )
-          .setTimestamp();
+      const scamEmbed = new EmbedBuilder()
+        .setColor(0xff0000)
+        .setTitle('Scam Message Detected')
+        .addFields(
+          { name: 'User', value: `<@${member.user.id}>`, inline: true },
+          { name: 'Message', value: message.content.slice(0, 1024) }
+        )
+        .setTimestamp();
 
-        const banButton = new ButtonBuilder()
-          .setCustomId(`ban_scammer_${member.user.id}`)
-          .setLabel('Ban User')
-          .setStyle(ButtonStyle.Danger)
-          .setEmoji('🔨');
+      const banButton = new ButtonBuilder()
+        .setCustomId(`ban_scammer_${member.user.id}`)
+        .setLabel('Ban User')
+        .setStyle(ButtonStyle.Danger)
+        .setEmoji('🔨');
 
-        const actionRow = new ActionRowBuilder()
-          .addComponents(banButton);
+      const actionRow = new ActionRowBuilder()
+        .addComponents(banButton);
 
-        await scamLogChannel.send({ 
-          embeds: [scamEmbed],
-          components: [actionRow]
-        });
-        return true;
-      }
+      await scamLogChannel.send({ 
+        embeds: [scamEmbed],
+        components: [actionRow]
+      });
+      return true;
     } catch (error) {
       logger.error('Error handling scam message:', error);
       return false;
