@@ -15,6 +15,7 @@ const {
 const { NewMemberAddHandler } = require('./src/handlers/NewMemberAddHandler');
 const { MemberLeaveHandler } = require('./src/handlers/MemberLeaveHandler');
 const { ReactionHandler } = require ('./src/handlers/ReactionHandler');
+const { ScamDetector } = require('./src/util/ScamDetector');
 
 
 const PROMETHEUS_PORT = process.env.PROMETHEUS_PORT || 9000;
@@ -61,6 +62,7 @@ const startBot = async () => {
   // we can call the methods defined in the ReactionHandler class by 
   // calling them on the reactionHandler object
   const reactionHandler = new ReactionHandler();
+  const scamDetector = new ScamDetector();
   client.once('ready', () => {
     messageHandler.initialize();
     client.user.setPresence({
@@ -123,6 +125,11 @@ const startBot = async () => {
     if (!interaction.isButton()) return; // Only handle button interactions
 
     const customId = interaction.customId;
+
+    if (customId.startsWith('ban_scammer_')) {
+      await scamDetector.handleBanButton(interaction);
+      return;
+    }
 
     // Check if this is one of our role toggle buttons
     if (!customId.startsWith('role_toggle_'))
