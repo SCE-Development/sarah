@@ -68,7 +68,12 @@ class ScamDetector {
       await message.delete();
       
       logger.info(`Jailed user ${member.user.tag} for potential scam message`);
-      if (scamLogChannel) {
+
+      if (!scamLogChannel) {
+        logger.warn('Scam log channel not found');
+        return false;
+      } else {
+      
         const scamEmbed = new EmbedBuilder()
           .setColor(0xff0000)
           .setTitle('Scam Message Detected')
@@ -91,10 +96,8 @@ class ScamDetector {
           embeds: [scamEmbed],
           components: [actionRow]
         });
-      } else {
-        logger.warn('Scam log channel not found');
+        return true;
       }
-      return true;
     } catch (error) {
       logger.error('Error handling scam message:', error);
       return false;
