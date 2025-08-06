@@ -20,7 +20,10 @@ class ScamDetector {
       'ticket',
       'tickets',
       'concert',
-      'call'
+      'call',
+      'assistant',
+      'hire',
+      '$',
     ];
   }
 
