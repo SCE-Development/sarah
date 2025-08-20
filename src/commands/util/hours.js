@@ -12,7 +12,12 @@ module.exports = new Command({
   execute: async (message, args) => {
     const embed = new EmbedBuilder()
       .setTitle('SCE Room Hours')
-      .setDescription('10:00 AM - 3:00 PM')
+      .setURL('https://sce.sjsu.edu/')
+      .addFields(
+        { name: 'Hours', value: '10:00 AM - 3:00 PM', inline: false },
+        { name: 'Days', value: 'Monday through Friday', inline: false },
+        { name: 'Location', value: 'Engineering 294', inline: false }
+      )
       .setColor(0x0099FF);
 
     await message.channel.send({ embeds: [embed] });
