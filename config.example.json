@@ -17,6 +17,6 @@
   "WELCOME": {
     "NEW_MEMBER_CHANNEL_ID": "xxxxxxxxxxx"
   },
-  "guildId": "xxxxxxxxxx"
-
+  "guildId": "xxxxxxxxxx",
+  "PARKING_CHANNEL_ID": "xxxxxxxx"
 }
