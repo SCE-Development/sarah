@@ -262,19 +262,27 @@ class ParkingScraper {
       const { data, websiteTimestamp } = this.cache;
       const embed = this.createParkingEmbed(data, websiteTimestamp);
 
-      if (this.embedMessage) {
-        // Update existing message
-        try {
-          await this.embedMessage.edit({ embeds: [embed] });
-        } catch (error) {
-          // If message was deleted, create a new one
-          logger.warn('Parking embed message was deleted, creating new one');
-          this.embedMessage = await channel.send({ embeds: [embed] });
+      // Delete any existing messages to keep only one message
+      try {
+        // Fetch recent messages from the channel
+        const messages = await channel.messages.fetch({ limit: 10 });
+        const botMessages = messages.filter(
+          msg => msg.author.id === this.client.user.id
+        );
+        
+        if (botMessages.size > 0) {
+          // Delete all previous bot messages
+          await Promise.all(botMessages.map(
+            msg => msg.delete().catch(() => {})
+          ));
+          logger.info(`Deleted ${botMessages.size} previous parking messages`);
         }
-      } else {
-        // Create new message
-        this.embedMessage = await channel.send({ embeds: [embed] });
+      } catch (error) {
+        logger.warn('Error deleting previous messages:', error.message);
       }
+
+      // Always create a new message
+      this.embedMessage = await channel.send({ embeds: [embed] });
 
       logger.info('Parking embed updated successfully');
 
