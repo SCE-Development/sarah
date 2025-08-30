@@ -144,15 +144,23 @@ class ParkingScraper {
     const parkingData = [];
     
     try {
-      // Extract timestamp - look for pattern like "Last updated 2025-8-26 1:01:00 PM"
-      const timestampMatch = html.match(/Last updated\s*([^<\n]+?)(?:\s*Refresh|<)/i);
-      const rawTimestamp = timestampMatch ? timestampMatch[1].trim() : 'Unknown';
+      // Extract timestamp - look for pattern like 
+      // "Last updated 2025-8-26 1:01:00 PM"
+      const timestampMatch = html.match(
+        /Last updated\s*([^<\n]+?)(?:\s*Refresh|<)/i
+      );
+      const rawTimestamp = timestampMatch ? 
+        timestampMatch[1].trim() : 'Unknown';
       const websiteTimestamp = this.formatTimestamp(rawTimestamp);
 
       // Simple regex to find garage names and their fullness
       // Look for patterns like: <h2 class="garage__name">North Garage</h2>
       // followed by: <span class="garage__fullness">85%</span>
-      const garagePattern = /<h2[^>]*garage__name[^>]*>([^<]+?)(?:\s*Garage)?\s*<\/h2>[\s\S]*?<span[^>]*garage__fullness[^>]*>([^<]+?)<\/span>/gi;
+      const garagePattern = new RegExp(
+        '<h2[^>]*garage__name[^>]*>([^<]+?)(?:\\s*Garage)?\\s*</h2>[\\s\\S]*?' +
+        '<span[^>]*garage__fullness[^>]*>([^<]+?)</span>',
+        'gi'
+      );
       
       let match;
       while ((match = garagePattern.exec(html)) !== null) {
@@ -185,11 +193,14 @@ class ParkingScraper {
     try {
       const response = await axios.get('https://sjsuparkingstatus.sjsu.edu/', {
         headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ' +
+            'AppleWebKit/537.36 (KHTML, like Gecko) ' +
+            'Chrome/91.0.4472.124 Safari/537.36'
         },
         timeout: 10000, // 10 second timeout
         httpsAgent: new (require('https').Agent)({
-          rejectUnauthorized: false // Ignore SSL certificate errors
+          // Ignore SSL certificate errors
+          rejectUnauthorized: false
         })
       });
 
@@ -284,9 +295,6 @@ class ParkingScraper {
         .setTimestamp();
     }
 
-    // Create chart
-    const chart = this.createChart(data, websiteTimestamp);
-    
     // Create status summary
     const summary = data.map(garage => {
       const percentage = parseInt(garage.fullness.replace('%', ''));
@@ -311,7 +319,9 @@ class ParkingScraper {
         value: websiteTimestamp,
         inline: true
       })
-      .setFooter({ text: 'Updates every 2 minutes • Use s!parking for cached data' })
+      .setFooter({ 
+        text: 'Updates every 2 minutes • Use s!parking for cached data' 
+      })
       .setTimestamp();
   }
 
@@ -351,7 +361,8 @@ class ParkingScraper {
     
     data.forEach(garage => {
       const fullness = parseInt(garage.fullness.replace('%', ''));
-      const barLength = Math.floor(fullness / 5); // 20 character bar (100% / 5 = 20)
+      // 20 character bar (100% / 5 = 20)
+      const barLength = Math.floor(fullness / 5);
       const filledBar = '█'.repeat(barLength);
       const emptyBar = '░'.repeat(20 - barLength);
       const paddedName = garage.name.padEnd(maxNameLength + 2);

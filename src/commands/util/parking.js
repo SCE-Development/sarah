@@ -60,7 +60,7 @@ module.exports = new Command({
         if (PARKING_CHANNEL_ID) {
           embed.addFields({
             name: '📊 Live Updates',
-            value: `Check <#${PARKING_CHANNEL_ID}> for auto-updating parking status`,
+            value: `Check <#${PARKING_CHANNEL_ID}> for parking status`,
             inline: false
           });
         }
@@ -68,7 +68,7 @@ module.exports = new Command({
         embed.setFooter({ 
           text: 'Cached data • Use "parking chart" for visual chart' 
         })
-        .setTimestamp();
+          .setTimestamp();
         
         message.channel.send({ embeds: [embed] });
       }
