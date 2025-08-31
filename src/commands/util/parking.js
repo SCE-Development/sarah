@@ -42,7 +42,9 @@ module.exports = new Command({
           .setTimestamp();
         
         message.channel.send({ embeds: [embed] });
-      } else {
+        return;
+      }
+      // down here, no need for else
         // Simple format with link to auto-updating channel
         const simpleText = parkingScraper.formatSimple(data);
         
