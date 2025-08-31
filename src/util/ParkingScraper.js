@@ -94,13 +94,11 @@ class ParkingScraper {
         websiteTimestamp: this.cache.websiteTimestamp,
         fromCache: true
       };
-    } else {
       return {
         success: false,
         error: 'No cached data available yet',
         fromCache: true
       };
-    }
   }
 
   /**
