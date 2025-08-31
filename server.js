@@ -63,8 +63,11 @@ const startBot = async () => {
   // calling them on the reactionHandler object
   const reactionHandler = new ReactionHandler();
   const scamDetector = new ScamDetector();
+  const parkingScraper = require('./src/util/ParkingScraper');
+  
   client.once('ready', () => {
     messageHandler.initialize();
+    parkingScraper.initialize(client);
     client.user.setPresence({
       activity: {
         name: `${prefix}help`,
