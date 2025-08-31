@@ -45,35 +45,34 @@ module.exports = new Command({
         return;
       }
       // down here, no need for else
-        // Simple format with link to auto-updating channel
-        const simpleText = parkingScraper.formatSimple(data);
+      // Simple format with link to auto-updating channel
+      const simpleText = parkingScraper.formatSimple(data);
         
-        const embed = new EmbedBuilder()
-          .setColor(0x0099FF)
-          .setTitle('🚗 SJSU Parking Status')
-          .setDescription(simpleText)
-          .addFields({ 
-            name: 'Last Updated', 
-            value: websiteTimestamp, 
-            inline: true 
-          });
+      const embed = new EmbedBuilder()
+        .setColor(0x0099FF)
+        .setTitle('🚗 SJSU Parking Status')
+        .setDescription(simpleText)
+        .addFields({ 
+          name: 'Last Updated', 
+          value: websiteTimestamp, 
+          inline: true 
+        });
 
-        // Add link to auto-updating channel if it exists
-        if (PARKING_CHANNEL_ID) {
-          embed.addFields({
-            name: '📊 Live Updates',
-            value: `Check <#${PARKING_CHANNEL_ID}> for parking status`,
-            inline: false
-          });
-        }
-
-        embed.setFooter({ 
-          text: 'Cached data • Use "parking chart" for visual chart' 
-        })
-          .setTimestamp();
-        
-        message.channel.send({ embeds: [embed] });
+      // Add link to auto-updating channel if it exists
+      if (PARKING_CHANNEL_ID) {
+        embed.addFields({
+          name: '📊 Live Updates',
+          value: `Check <#${PARKING_CHANNEL_ID}> for parking status`,
+          inline: false
+        });
       }
+
+      embed.setFooter({ 
+        text: 'Cached data • Use "parking chart" for visual chart' 
+      })
+        .setTimestamp();
+        
+      message.channel.send({ embeds: [embed] });
       
     } catch (error) {
       message.channel.send(`❌ An error occurred: ${error.message}`);

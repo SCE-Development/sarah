@@ -57,12 +57,12 @@ class ParkingScraper {
           websiteTimestamp: result.websiteTimestamp,
           timestamp: Date.now()
         };
-        
+
         // Update embed if we have a client
         if (this.client) {
           await this.updateParkingEmbed();
         }
-        
+
         logger.info('Parking data cache updated successfully');
       } else {
         logger.error(`Failed to update parking cache: ${result.error}`);
@@ -94,24 +94,27 @@ class ParkingScraper {
         websiteTimestamp: this.cache.websiteTimestamp,
         fromCache: true
       };
+    } else {
       return {
         success: false,
         error: 'No cached data available yet',
         fromCache: true
       };
+    }
   }
 
   /**
-   * Check if cache is still valid (not used anymore since we always use cache)
+   * Check if cache is still valid
+   * (not used anymore since we always use cache)
    */
   isCacheValid() {
     return this.cache !== null;
   }
 
   /**
-   * Format timestamp to ensure two-digit month and day and add PST timezone
-   * Input: "2025-8-26 1:01:00 PM" -> Output: "2025-08-26 1:01:00 PM PST"
-   */
+     * Format timestamp to ensure two-digit month and day and add PST timezone
+     * Input: "2025-8-26 1:01:00 PM" -> Output: "2025-08-26 1:01:00 PM PST"
+     */
   formatTimestamp(timestamp) {
     if (!timestamp || timestamp === 'Unknown') {
       return timestamp;
@@ -126,7 +129,7 @@ class ParkingScraper {
         const formattedDay = day.padStart(2, '0');
         return `${year}-${formattedMonth}-${formattedDay}${timepart} PST`;
       }
-      
+
       return timestamp + ' PST';
     } catch (error) {
       logger.warn('Error formatting timestamp:', error);
@@ -135,19 +138,19 @@ class ParkingScraper {
   }
 
   /**
-   * Extract parking data from HTML using simple string parsing
-   * Since we don't have cheerio, we'll use regex/string methods
-   */
+     * Extract parking data from HTML using simple string parsing
+     * Since we don't have cheerio, we'll use regex/string methods
+     */
   parseHtml(html) {
     const parkingData = [];
-    
+
     try {
       // Extract timestamp - look for pattern like 
       // "Last updated 2025-08-26 01:01:00 PM"
       const timestampMatch = html.match(
         /Last updated\s*([^<\n]+?)(?:\s*Refresh|<)/i
       );
-      const rawTimestamp = timestampMatch ? 
+      const rawTimestamp = timestampMatch ?
         timestampMatch[1].trim() : 'Unknown';
       const websiteTimestamp = this.formatTimestamp(rawTimestamp);
 
@@ -156,25 +159,25 @@ class ParkingScraper {
       // followed by: <span class="garage__fullness">85%</span>
       const garagePattern = new RegExp(
         '<h2[^>]*garage__name[^>]*>([^<]+?)(?:\\s*Garage)?\\s*</h2>[\\s\\S]*?' +
-        '<span[^>]*garage__fullness[^>]*>([^<]+?)</span>',
+          '<span[^>]*garage__fullness[^>]*>([^<]+?)</span>',
         'gi'
       );
-      
+
       let match;
       while ((match = garagePattern.exec(html)) !== null) {
         const name = match[1].trim();
         let fullness = match[2].trim();
-        
+
         // Clean up fullness data
         if (fullness.toLowerCase() === 'full') {
           fullness = '100%';
         }
-        
+
         // Ensure percentage sign
         if (!fullness.includes('%') && !isNaN(parseInt(fullness))) {
           fullness = fullness + '%';
         }
-        
+
         parkingData.push({ name, fullness });
       }
 
@@ -192,8 +195,8 @@ class ParkingScraper {
       const response = await axios.get('https://sjsuparkingstatus.sjsu.edu/', {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ' +
-            'AppleWebKit/537.36 (KHTML, like Gecko) ' +
-            'Chrome/91.0.4472.124 Safari/537.36'
+              'AppleWebKit/537.36 (KHTML, like Gecko) ' +
+              'Chrome/91.0.4472.124 Safari/537.36'
         },
         timeout: 10000, // 10 second timeout
         httpsAgent: new (require('https').Agent)({
@@ -226,13 +229,13 @@ class ParkingScraper {
   }
 
   /**
-   * Format parking data as simple text
-   */
+     * Format parking data as simple text
+     */
   formatSimple(data) {
     if (!data || data.length === 0) {
       return 'No parking data available';
     }
-    
+
     return data.map(garage => `${garage.name}: ${garage.fullness}`).join('\n');
   }
 
@@ -267,11 +270,11 @@ class ParkingScraper {
         const botMessages = messages.filter(
           msg => msg.author.id === this.client.user.id
         );
-        
+
         if (botMessages.size > 0) {
           // Delete all previous bot messages
           await Promise.all(botMessages.map(
-            msg => msg.delete().catch(() => {})
+            msg => msg.delete().catch(() => { })
           ));
           logger.info(`Deleted ${botMessages.size} previous parking messages`);
         }
@@ -290,8 +293,8 @@ class ParkingScraper {
   }
 
   /**
-   * Create Discord embed for parking data
-   */
+     * Create Discord embed for parking data
+     */
   createParkingEmbed(data, websiteTimestamp) {
     if (!data || data.length === 0) {
       return new EmbedBuilder()
@@ -307,7 +310,7 @@ class ParkingScraper {
       let statusEmoji = '🟢'; // Green for low usage
       if (percentage >= 90) statusEmoji = '🔴'; // Red for high usage
       else if (percentage >= 70) statusEmoji = '🟡'; // Yellow for medium usage
-      
+
       return `${statusEmoji} **${garage.name}**: ${garage.fullness}`;
     }).join('\n');
 
@@ -325,46 +328,46 @@ class ParkingScraper {
         value: websiteTimestamp,
         inline: true
       })
-      .setFooter({ 
-        text: 'Updates every 2 minutes • Use s!parking for cached data' 
+      .setFooter({
+        text: 'Updates every 2 minutes • Use s!parking for cached data'
       })
       .setTimestamp();
   }
 
   /**
-   * Create a simple chart for embed
-   */
+     * Create a simple chart for embed
+     */
   createSimpleChart(data) {
     if (!data || data.length === 0) {
       return 'No data available';
     }
 
     const maxNameLength = Math.max(...data.map(d => d.name.length));
-    
+
     return data.map(garage => {
       const fullness = parseInt(garage.fullness.replace('%', ''));
       const barLength = Math.floor(fullness / 5); // 20 character bar
       const filledBar = '█'.repeat(barLength);
       const emptyBar = '░'.repeat(20 - barLength);
       const paddedName = garage.name.padEnd(maxNameLength);
-      
+
       return `${paddedName} ${filledBar}${emptyBar} ${garage.fullness}`;
     }).join('\n');
   }
 
   /**
-   * Create a simple text chart using ASCII characters (for command usage)
-   */
+     * Create a simple text chart using ASCII characters (for command usage)
+     */
   createChart(data, websiteTimestamp) {
     if (!data || data.length === 0) {
       return 'No parking data available';
     }
 
     const maxNameLength = Math.max(...data.map(d => d.name.length));
-    
+
     let chart = 'SJSU Parking Status\n';
     chart += '='.repeat(50) + '\n\n';
-    
+
     data.forEach(garage => {
       const fullness = parseInt(garage.fullness.replace('%', ''));
       // 20 character bar (100% / 5 = 20)
@@ -372,12 +375,12 @@ class ParkingScraper {
       const filledBar = '█'.repeat(barLength);
       const emptyBar = '░'.repeat(20 - barLength);
       const paddedName = garage.name.padEnd(maxNameLength + 2);
-      
+
       chart += `${paddedName} ${filledBar}${emptyBar} ${garage.fullness}\n`;
     });
-    
+
     chart += `\nLast updated: ${websiteTimestamp}`;
-    
+
     return chart;
   }
 }
