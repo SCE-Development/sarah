@@ -266,29 +266,65 @@ class ParkingScraper {
       const { data, websiteTimestamp } = this.cache;
       const embed = this.createParkingEmbed(data, websiteTimestamp);
 
-      // Delete any existing messages to keep only one message
+      // Try to edit existing message first
+      if (this.embedMessage) {
+        try {
+          await this.embedMessage.edit({ embeds: [embed] });
+          logger.info(
+            'Parking embed updated successfully (edited existing message)'
+          );
+          return;
+        } catch (error) {
+          logger.warn(
+            'Failed to edit existing message, will find or create new one:',
+            error.message
+          );
+          this.embedMessage = null;
+        }
+      }
+
+      // Check for existing bot messages in the channel
       try {
-        // Fetch recent messages from the channel
         const messages = await channel.messages.fetch({ limit: 10 });
-        const botMessages = messages.filter(
+        const botMessage = messages.find(
           msg => msg.author.id === this.client.user.id
         );
 
-        if (botMessages.size > 0) {
-          // Delete all previous bot messages
-          await Promise.all(botMessages.map(
-            msg => msg.delete().catch(() => { })
-          ));
-          logger.info(`Deleted ${botMessages.size} previous parking messages`);
+        if (botMessage) {
+          // Edit the found message
+          this.embedMessage = await botMessage.edit({ embeds: [embed] });
+          logger.info(
+            'Parking embed updated successfully (edited found message)'
+          );
+        } else {
+          // No existing messages found - delete any old ones and create fresh
+          const allBotMessages = messages.filter(
+            msg => msg.author.id === this.client.user.id
+          );
+          
+          if (allBotMessages.size > 0) {
+            await Promise.all(allBotMessages.map(
+              msg => msg.delete().catch(() => {})
+            ));
+            logger.info(`Deleted ${allBotMessages.size} old parking messages`);
+          }
+
+          // Create new message
+          this.embedMessage = await channel.send({ embeds: [embed] });
+          logger.info(
+            'Parking embed updated successfully (created new message)'
+          );
         }
       } catch (error) {
-        logger.warn('Error deleting previous messages:', error.message);
+        logger.warn(
+          'Error finding/editing message, creating new one:',
+          error.message
+        );
+        this.embedMessage = await channel.send({ embeds: [embed] });
+        logger.info(
+          'Parking embed updated successfully (fallback new message)'
+        );
       }
-
-      // Always create a new message
-      this.embedMessage = await channel.send({ embeds: [embed] });
-
-      logger.info('Parking embed updated successfully');
 
     } catch (error) {
       logger.error('Error updating parking embed:', error);
