@@ -143,7 +143,7 @@ class ParkingScraper {
     
     try {
       // Extract timestamp - look for pattern like 
-      // "Last updated 2025-8-26 1:01:00 PM"
+      // "Last updated 2025-08-26 01:01:00 PM"
       const timestampMatch = html.match(
         /Last updated\s*([^<\n]+?)(?:\s*Refresh|<)/i
       );
