@@ -51,22 +51,25 @@ class ParkingScraper {
     try {
       logger.info('Fetching parking data...');
       const result = await this.scrapeParkingData();
-      if (result.success) {
-        this.cache = {
-          data: result.data,
-          websiteTimestamp: result.websiteTimestamp,
-          timestamp: Date.now()
-        };
-
-        // Update embed if we have a client
-        if (this.client) {
-          await this.updateParkingEmbed();
-        }
-
-        logger.info('Parking data cache updated successfully');
-      } else {
+      
+      if (!result.success) {
         logger.error(`Failed to update parking cache: ${result.error}`);
+        return;
       }
+
+      // Update cache with successful result
+      this.cache = {
+        data: result.data,
+        websiteTimestamp: result.websiteTimestamp,
+        timestamp: Date.now()
+      };
+
+      // Update embed if we have a client
+      if (this.client) {
+        await this.updateParkingEmbed();
+      }
+
+      logger.info('Parking data cache updated successfully');
     } catch (error) {
       logger.error('Error in fetchAndCacheData:', error);
     }
