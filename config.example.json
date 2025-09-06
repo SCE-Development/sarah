@@ -14,6 +14,7 @@
   },
   "verifiedRoleId": "xxxxxxxxxx",
   "jailRoleId": "xxxxxxxxxx",
+  "OFFICER_ROLE": "xxxxxxxxxx",
   "WELCOME": {
     "NEW_MEMBER_CHANNEL_ID": "xxxxxxxxxxx"
   },
