@@ -1,6 +1,7 @@
 const logger = require('./logger');
 const { EmbedBuilder } = require('discord.js');
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const config = require('../../config.json');
 
 class ScamDetector {
   constructor() {
@@ -27,9 +28,15 @@ class ScamDetector {
     ];
   }
 
-  isScamMessage(messageContent) {
+  isScamMessage(message) {
     try {
-      const content = messageContent.toLowerCase();
+      // Check if user has officer role - bypass scam detection
+      if (message.member && message.member.roles.cache.has(
+        config.OFFICER_ROLE)) {
+        return false;
+      }
+
+      const content = message.content.toLowerCase();
       
       let keywordCount = 0;
       for (const keyword of this.scamKeywords) {

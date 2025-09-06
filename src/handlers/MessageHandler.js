@@ -52,7 +52,7 @@ class MessageHandler {
       }
 
       // Check for scam messages first
-      if (this.scamDetector.isScamMessage(message.content)) {
+      if (this.scamDetector.isScamMessage(message)) {
         await this.scamDetector.handleScamMessage(
           message, config.jailRoleId, config.SCAM_LOG_CHANNEL_ID
         );
