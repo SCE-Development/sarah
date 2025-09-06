@@ -31,7 +31,8 @@ class ScamDetector {
   isScamMessage(message) {
     try {
       // Check if user has officer role - bypass scam detection
-      if (message.member && message.member.roles.cache.has(config.OFFICER_ROLE)) {
+      if (message.member && message.member.roles.cache.has(
+        config.OFFICER_ROLE)) {
         return false;
       }
 
