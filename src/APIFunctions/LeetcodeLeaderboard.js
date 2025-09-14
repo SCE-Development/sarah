@@ -13,7 +13,12 @@ function queryLeetcodeLeaderboard() {
       .then((res) => {
         const responseData = res.data.map((user, index) => {
           const profileUrl = `https://leetcode.com/u/${user.user}/`;
-          return `${index + 1}. [${user.user}](${profileUrl}): ${user.points > 1 ? user.points + ' points' : user.points + ' point'}`;
+          return (
+            `${index + 1}. [${user.user}](${profileUrl}): ` +
+              (user.points > 1
+                ? user.points + ' points'
+                : user.points + ' point')
+          );
         });
         const trimmedResponseData = responseData.slice(0, 10).join('\n');
         resolve(trimmedResponseData);
