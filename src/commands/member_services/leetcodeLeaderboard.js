@@ -61,7 +61,8 @@ module.exports = new Command({
     const headerNamePadding = ' '.repeat(maxNameLen - headerName.length + gap);
     const headerPointsPadding = ' '.repeat(maxPointsLen - headerPoints.length);
     
-    description += `\u001b[0;37m${headerName}${headerNamePadding}${headerPointsPadding}${headerPoints}\u001b[0m\n`;
+    description += `\u001b[0;37m${headerName}${headerNamePadding}` +
+      `${headerPointsPadding}${headerPoints}\u001b[0m\n`;
 
     top10.forEach((user, index) => {
       const rank = index + 1;
@@ -78,12 +79,14 @@ module.exports = new Command({
       else if (rank === 2) colorCode = '\u001b[0;31m';
       else if (rank === 3) colorCode = '\u001b[0;34m';
       
-      description += `${colorCode}${nameCol}${namePadding}${pointsPadding}${points}\u001b[0m\n`;
+      description += `${colorCode}${nameCol}${namePadding}` +
+        `${pointsPadding}${points}\u001b[0m\n`;
     });
 
     const monthText = `Month: ${MONTHS[month]}`;
     const monthPadding = Math.floor((totalWidth - monthText.length) / 2);
-    description += `\u001b[0;33m${' '.repeat(monthPadding)}${monthText}\u001b[0m\n`;
+    description += `\u001b[0;33m${' '.repeat(monthPadding)}` +
+      `${monthText}\u001b[0m\n`;
 
     description += '```';
 
