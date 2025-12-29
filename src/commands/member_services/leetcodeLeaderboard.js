@@ -1,5 +1,7 @@
 const Command = require('../Command');
-const { queryLeetcodeLeaderboard } = require('../../APIFunctions/LeetcodeLeaderboard');
+const {
+  queryLeetcodeLeaderboard
+} = require('../../APIFunctions/LeetcodeLeaderboard');
 const { EmbedBuilder } = require('discord.js');
 
 const MONTHS = [
