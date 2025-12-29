@@ -1,5 +1,5 @@
 const Command = require('../Command');
-const { getLeetCodeLeaderboard } = require('../util/leetcodeLeaderboard');
+const { queryLeetcodeLeaderboard } = require('../../APIFunctions/LeetcodeLeaderboard');
 const { EmbedBuilder } = require('discord.js');
 
 const MONTHS = [
@@ -15,7 +15,7 @@ module.exports = new Command({
   permissions: 'member',
   category: 'member services',
   execute: async (message) => {
-    const data = await getLeetCodeLeaderboard();
+    const data = await queryLeetcodeLeaderboard();
 
     if (!data || !data.leaderboard) {
       return message.channel.send('Error querying LeetCode Leaderboard.');
