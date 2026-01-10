@@ -14,8 +14,8 @@ module.exports = new Command({
   description: 'Query the LeetCode Leaderboard',
   aliases: [],
   example: 's!leetcode',
-  permissions: 'member',
-  category: 'member services',
+  permissions: 'general',
+  category: 'information',
   execute: async (message) => {
     const data = await queryLeetcodeLeaderboard();
 
