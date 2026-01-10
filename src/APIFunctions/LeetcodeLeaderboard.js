@@ -6,15 +6,15 @@ const { LEETCODE_LEADERBOARD_API_URL } = require('../../config.json');
  * @return {Promise} A promise that contains the leaderboard stats
  */
 function queryLeetcodeLeaderboard() {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     axios.get(
       LEETCODE_LEADERBOARD_API_URL,
     )
       .then((res) => {
         resolve(res.data);
       })
-      .catch(() => {
-        resolve(null);
+      .catch((error) => {
+        reject(error);
       });
   });
 }
