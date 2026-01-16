@@ -1,3 +1,7 @@
+const sodium = require('libsodium-wrappers');
+sodium.ready.then(() => {
+  console.log('libsodium initialized');
+});
 const http = require('http');
 const Discord = require('discord.js');
 const promClient = require('prom-client');

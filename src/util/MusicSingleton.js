@@ -4,10 +4,13 @@ const {
   AudioPlayerStatus,
   getVoiceConnection,
   createAudioResource,
+  StreamType,
 } = require('@discordjs/voice');
 // at the top of your file
 const { EmbedBuilder } = require('discord.js');
+const play = require('play-dl');
 const logger = require('./logger');
+
 
 // see https://stackoverflow.com/a/59626464
 class MusicSingleton {
@@ -16,10 +19,8 @@ class MusicSingleton {
       return MusicSingleton._instance;
     }
     MusicSingleton._instance = this;
-    this.youtubeReady = (async () => {
-      const { Innertube } = await import('youtubei.js');
-      return Innertube.create();
-    })();
+
+
     this._currentMessage = null;
     this.upcoming = [];
     this.nowPlayingMetadata = {};
@@ -45,37 +46,74 @@ class MusicSingleton {
       logger.error('Audio player encountered an error:', error);
     });
   }
+
+  async initYouTube() {
+    const { Innertube, Platform, Types } = await import("youtubei.js/web");
+    Platform.shim.eval = async (data, env) => {
+        const properties = [];
+        if (env.n) properties.push(`n: exportedVars.nFunction("${env.n}")`);
+        if (env.sig) properties.push(`sig: exportedVars.sigFunction("${env.sig}")`);
+        const code = `${data.output}\nreturn { ${properties.join(', ')} };`;
+        return new Function(code)();
+      };
+    
+    this.youtube = await Innertube.create({
+      enable_session_cache: true,
+      player_id: "0004de42",
+      client_type: "ANDROID",
+    });
+
+    return this.youtube;
+  }
+
   extractVideoId(url) {
     const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
     const match = url.match(regex);
     return match ? match[1] : null;
   }
+
+  videoIdToUrl(videoId) {
+  if (typeof videoId !== 'string' || videoId.length !== 11) {
+    throw new Error('Invalid YouTube video ID');
+  }
+  return `https://www.youtube.com/watch?v=${videoId}`;
+  }
+
   
   async announceNowPlaying(originalThis) {
+    console.log('📢 announceNowPlaying called!');
+    console.log('alreadyAnnounced:', originalThis.alreadyAnnouncedCurrentVideo);
+    console.log('metadata:', originalThis.nowPlayingMetadata);
+      
     if (originalThis.alreadyAnnouncedCurrentVideo) {
+      console.log('Already announced, returning early');
+      return;
+    }
+
+      if (originalThis.alreadyAnnouncedCurrentVideo) {
       return;
     }
     originalThis.alreadyAnnouncedCurrentVideo = true;
+    const metadata = originalThis.nowPlayingMetadata;
+    
     const embeddedSong = new EmbedBuilder()
       .setColor(0x0099FF)
-      .setTitle(originalThis.nowPlayingMetadata.title)
-      .setURL(originalThis.nowPlayingMetadata.video_url)
+      .setTitle(metadata.title)
+      .setURL(metadata.url_canonical || `https://www.youtube.com/watch?v=${metadata.id}`)
       .setAuthor({ name: 'Now playing' })
-      .setThumbnail(originalThis.nowPlayingMetadata.thumbnails[2].url)
-      .setFooter(
-        {
-          text: `Requested by ${this._currentMessage.author.username}`,
-          iconURL: `${this._currentMessage.author.displayAvatarURL()}`
-        }
-      );
+      .setThumbnail(metadata.thumbnail?.[0]?.url || `https://i.ytimg.com/vi/${metadata.id}/hqdefault.jpg`)
+      .setFooter({
+        text: `Requested by ${this._currentMessage.author.username}`,
+        iconURL: `${this._currentMessage.author.displayAvatarURL()}`
+      });
     originalThis._currentMessage.channel.send({ embeds: [embeddedSong] });
   }
 
   async playNextUpcomingUrl(originalThis) {
     try {
-      await this.youtubeReady;
-    } catch (e) {
-      logger.error('couldnt play next song:', e);
+      this.youtube = await this.initYouTube();   
+     } catch (e) {
+      logger.error('couldnt initialize yt:', e);
       return;
     }
 
@@ -88,20 +126,28 @@ class MusicSingleton {
 
       this.alreadyAnnouncedCurrentVideo =
         this.nowPlayingMetadata &&
-        this.nowPlayingMetadata.video_url === metadata.video_url;
+        this.nowPlayingMetadata.id === metadata.id;
 
       this.nowPlayingMetadata = metadata;
 
+
       try {
         const info = await this.youtube.getInfo(videoId);
-        const format = info.chooseFormat({ type: 'audio' });
-        const stream = format.decipher(this.youtube.session.player);
 
-        const resource = createAudioResource(stream);
-        originalThis.audioPlayer.play(resource);
+        const stream = await info.download(this.videoIdToUrl(videoId), {
+          type: "audio",
+          format: "opus",
+        });
+
+        const resource = createAudioResource(stream, {
+          inputType: StreamType.Opus,
+        });
+
+        this.audioPlayer.play(resource);
       } catch (e) {
-        logger.error('couldnt create audio resource:', e);
+        logger.error("couldn't create audio resource:", e);
       }
+
     } else if (this.botWasKicked) {
       this.botWasKicked = false;
     } else {
@@ -203,6 +249,7 @@ class MusicSingleton {
     } else {
       // the above will call announceNowPlaying implicitly, so we put the
       // below call in an else to avoid showing the user what's playing twice
+      console.log("heyyyy: ", this);
       this.announceNowPlaying(this);
     }
   }
@@ -252,7 +299,7 @@ class MusicSingleton {
   // not assumed sent url is valid YouTube URL anymore
   async playOrAddYouTubeUrlToQueue(message, url, repetitions = 1) {
     try {
-      await this.youtubeReady;
+      this.youtube = await this.initYouTube();   
       const videoId = this.extractVideoId(url);
 
       if (videoId === null) {
@@ -316,18 +363,26 @@ class MusicSingleton {
         });
         message.channel.send({ embeds: [embeddedQueue] });
       } else {
+        console.log('▶️ Playing immediately, not in queue');
+        this._currentMessage = message; 
         this.nowPlayingMetadata = { ...videoDetails, repetitions: 1 };
-
-        const format = info.chooseFormat({ type: 'audio' });
-        const stream = format.decipher(this.youtube.session.player);        
         
-        this.audioPlayer.play(
-          createAudioResource(stream)
-        );
+        console.log('Now playing metadata set:', this.nowPlayingMetadata);
+        
+        //const stream = await play.stream(this.videoIdToUrl(videoId)) 
+        const stream = await info.download(this.videoIdToUrl(videoId), {
+          type: "audio",
+          quality: "best",
+          format: "opus", // 👈 IMPORTANT
+        });
+        // const playResult = await play.stream(this.videoIdToUrl(videoId));
+        const resource = createAudioResource(stream, {
+          inputType: StreamType.Opus, // 👈 REQUIRED
+        });          
 
-        if (repetitions > 1) {
-          this.playOrAddYouTubeUrlToQueue(message, url, repetitions - 1);
-        }
+        console.log('About to play audio...');
+        this.audioPlayer.play(resource);
+        console.log('Audio player state:', this.audioPlayer.state.status);
       }
       return true;
     } catch (e) {
