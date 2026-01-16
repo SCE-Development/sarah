@@ -7,8 +7,6 @@ const {
 } = require('@discordjs/voice');
 // at the top of your file
 const { EmbedBuilder } = require('discord.js');
-
-const ytdl = require('@distube/ytdl-core');
 const logger = require('./logger');
 
 // see https://stackoverflow.com/a/59626464
@@ -18,7 +16,10 @@ class MusicSingleton {
       return MusicSingleton._instance;
     }
     MusicSingleton._instance = this;
-
+    this.youtubeReady = (async () => {
+      const { Innertube } = await import('youtubei.js');
+      return Innertube.create();
+    })();
     this._currentMessage = null;
     this.upcoming = [];
     this.nowPlayingMetadata = {};
@@ -44,7 +45,12 @@ class MusicSingleton {
       logger.error('Audio player encountered an error:', error);
     });
   }
-
+  extractVideoId(url) {
+    const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+  }
+  
   async announceNowPlaying(originalThis) {
     if (originalThis.alreadyAnnouncedCurrentVideo) {
       return;
@@ -66,23 +72,37 @@ class MusicSingleton {
   }
 
   async playNextUpcomingUrl(originalThis) {
+    try {
+      await this.youtubeReady;
+    } catch (e) {
+      logger.error('couldnt play next song:', e);
+      return;
+    }
+
     if (originalThis.upcoming.length) {
-      const { url: latestTrack, metadata } = originalThis.upcoming[0];
+      const { url: latestTrack, videoId, metadata } = originalThis.upcoming[0];
       metadata.repetitions -= 1;
       if (metadata.repetitions === 0) {
         originalThis.upcoming.shift();
       }
-      this.alreadyAnnouncedCurrentVideo = this.nowPlayingMetadata && 
+
+      this.alreadyAnnouncedCurrentVideo =
+        this.nowPlayingMetadata &&
         this.nowPlayingMetadata.video_url === metadata.video_url;
+
       this.nowPlayingMetadata = metadata;
-      let stream = ytdl(latestTrack, { filter: 'audioonly' });
-      const resource = createAudioResource(stream);
-      originalThis.audioPlayer.play(resource);
-    }
-    else if (this.botWasKicked) {
-      // when the bot is kicked from a channel, the next time it plays a song,
-      // the state first goes to idle. we handle this case here by
-      // playing the next song instead of disconnecting the bot
+
+      try {
+        const info = await this.youtube.getInfo(videoId);
+        const format = info.chooseFormat({ type: 'audio' });
+        const stream = format.decipher(this.youtube.session.player);
+
+        const resource = createAudioResource(stream);
+        originalThis.audioPlayer.play(resource);
+      } catch (e) {
+        logger.error('couldnt create audio resource:', e);
+      }
+    } else if (this.botWasKicked) {
       this.botWasKicked = false;
     } else {
       const connection = getVoiceConnection(
@@ -92,7 +112,6 @@ class MusicSingleton {
       connection.destroy();
     }
   }
-
   isBotConnectedToChannel() {
     return this._isBotConnectedToChannel;
   }
@@ -230,11 +249,21 @@ class MusicSingleton {
     this._currentMessage.channel.send({ embeds: [embeddedQueue] });
   }
 
-  // Assumes sent url is valid YouTube URL
+  // not assumed sent url is valid YouTube URL anymore
   async playOrAddYouTubeUrlToQueue(message, url, repetitions = 1) {
     try {
-      const { videoDetails } = await ytdl.getInfo(url);
-      this._currentMessage = message;
+      await this.youtubeReady;
+      const videoId = this.extractVideoId(url);
+
+      if (videoId === null) {
+        message.reply(
+          `${url} is not a valid YouTube URL`
+        );
+        return false;
+      }
+
+      const info = await this.youtube.getInfo(videoId);
+      const videoDetails = info.basic_info;
 
       if (!message.member.voice.channel) {
         message.reply('You need to join a voice channel first!');
@@ -257,7 +286,7 @@ class MusicSingleton {
         const embeddedQueue = new EmbedBuilder()
           .setColor(0x0099FF)
           .setTitle(videoDetails.title)
-          .setURL(videoDetails.video_url)
+          .setURL(videoDetails.url_canonical)
           .setAuthor({ name: 'Added Track' })
           .addFields(
             {
@@ -282,15 +311,20 @@ class MusicSingleton {
         // push after sending message to preserve 0-indexing
         this.upcoming.push({ 
           url, 
+          videoId,
           metadata: { ...videoDetails, repetitions }
         });
         message.channel.send({ embeds: [embeddedQueue] });
       } else {
         this.nowPlayingMetadata = { ...videoDetails, repetitions: 1 };
-        const stream = ytdl(url, { filter: 'audioonly' });
+
+        const format = info.chooseFormat({ type: 'audio' });
+        const stream = format.decipher(this.youtube.session.player);        
+        
         this.audioPlayer.play(
           createAudioResource(stream)
         );
+
         if (repetitions > 1) {
           this.playOrAddYouTubeUrlToQueue(message, url, repetitions - 1);
         }
@@ -302,5 +336,6 @@ class MusicSingleton {
     }
   }
 }
+
 
 module.exports = MusicSingleton;

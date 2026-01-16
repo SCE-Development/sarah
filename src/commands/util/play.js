@@ -1,5 +1,4 @@
 const { prefix } = require('../../../config.json');
-const ytdl = require('@distube/ytdl-core');
 const play = require('play-dl');
 
 const Command = require('../Command');
@@ -21,9 +20,7 @@ module.exports = new Command({
     if (!url) {
       return musicHandler.resume(message);
     }
-    if (ytdl.validateURL(url)) {
-      return musicHandler.playOrAddYouTubeUrlToQueue(message, url, repetitions);
-    }
+    
     if (args[0] === undefined) {
       return message.reply(`Usage: 
         \`${prefix}search <query>: Returns top 5\`
@@ -32,8 +29,12 @@ module.exports = new Command({
         
         `);
     }
-
-    const searchQuery = args.slice(1).join(' ');
+    
+    try{
+      const ok = await musicHandler.playOrAddYouTubeUrlToQueue(message, url, repetitions);
+    } catch (error) {
+      console.error('Error validating URL:', error);
+       const searchQuery = args.slice(1).join(' ');
     let ytInfo = await play.search(searchQuery, { limit: 1 });
     if (ytInfo.length > 0) {
       return musicHandler.playOrAddYouTubeUrlToQueue(
@@ -45,5 +46,8 @@ module.exports = new Command({
     message.reply(
       `${args.join(' ')} is not a valid YouTube / SoundCloud URL`
     );
+    }
+
+    
   } 
 });
