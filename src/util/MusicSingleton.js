@@ -20,7 +20,7 @@ class MusicSingleton {
     }
     MusicSingleton._instance = this;
 
-
+    this.music = null;
     this._currentMessage = null;
     this.upcoming = [];
     this.nowPlayingMetadata = {};
@@ -48,14 +48,15 @@ class MusicSingleton {
   }
 
   async initYouTube() {
-    const { Innertube, Platform, Types } = await import("youtubei.js/web");
-    Platform.shim.eval = async (data, env) => {
-        const properties = [];
-        if (env.n) properties.push(`n: exportedVars.nFunction("${env.n}")`);
-        if (env.sig) properties.push(`sig: exportedVars.sigFunction("${env.sig}")`);
-        const code = `${data.output}\nreturn { ${properties.join(', ')} };`;
-        return new Function(code)();
-      };
+    const { Client, MusicClient, MusicSongCompact } = require('youtubei');
+    const { Innertube, Platform, Types } = await import('youtubei.js');
+    // Platform.shim.eval = async (data, env) => {
+    //     const properties = [];
+    //     if (env.n) properties.push(`n: exportedVars.nFunction("${env.n}")`);
+    //     if (env.sig) properties.push(`sig: exportedVars.sigFunction("${env.sig}")`);
+    //     const code = `${data.output}\nreturn { ${properties.join(', ')} };`;
+    //     return new Function(code)();
+    //   };
     
     this.youtube = await Innertube.create({
       enable_session_cache: true,
@@ -63,7 +64,11 @@ class MusicSingleton {
       client_type: "ANDROID",
     });
 
-    return this.youtube;
+    // this.youtube = new Client();
+    //return this.youtube;
+
+    // this.music = new MusicClient();
+    return this.music;
   }
 
   extractVideoId(url) {
@@ -83,7 +88,7 @@ class MusicSingleton {
   async announceNowPlaying(originalThis) {
     console.log('📢 announceNowPlaying called!');
     console.log('alreadyAnnounced:', originalThis.alreadyAnnouncedCurrentVideo);
-    console.log('metadata:', originalThis.nowPlayingMetadata);
+    // console.log('metadata:', originalThis.nowPlayingMetadata);
       
     if (originalThis.alreadyAnnouncedCurrentVideo) {
       console.log('Already announced, returning early');
@@ -134,7 +139,7 @@ class MusicSingleton {
       try {
         const info = await this.youtube.getInfo(videoId);
 
-        const stream = await info.download(this.videoIdToUrl(videoId), {
+        const stream = await info.getStreamingData(this.videoIdToUrl(videoId), {
           type: "audio",
           format: "opus",
         });
@@ -299,7 +304,10 @@ class MusicSingleton {
   // not assumed sent url is valid YouTube URL anymore
   async playOrAddYouTubeUrlToQueue(message, url, repetitions = 1) {
     try {
-      this.youtube = await this.initYouTube();   
+      // const shelves = await music.search("Never gonna give you up");
+      
+      this.youtube = await this.initYouTube();
+
       const videoId = this.extractVideoId(url);
 
       if (videoId === null) {
@@ -309,7 +317,7 @@ class MusicSingleton {
         return false;
       }
 
-      const info = await this.youtube.getInfo(videoId);
+      const info = this.youtube.getInfo(videoId);
       const videoDetails = info.basic_info;
 
       if (!message.member.voice.channel) {
@@ -370,7 +378,7 @@ class MusicSingleton {
         console.log('Now playing metadata set:', this.nowPlayingMetadata);
         
         //const stream = await play.stream(this.videoIdToUrl(videoId)) 
-        const stream = await info.download(this.videoIdToUrl(videoId), {
+        const stream = await info.getStreamingData(this.videoIdToUrl(videoId), {
           type: "audio",
           quality: "best",
           format: "opus", // 👈 IMPORTANT
