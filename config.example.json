@@ -19,5 +19,6 @@
     "NEW_MEMBER_CHANNEL_ID": "xxxxxxxxxxx"
   },
   "guildId": "xxxxxxxxxx",
-  "PARKING_CHANNEL_ID": "xxxxxxxx"
+  "PARKING_CHANNEL_ID": "xxxxxxxx",
+  "WORDLE_BOT_ID": "xxxxxxxxxx"
 }

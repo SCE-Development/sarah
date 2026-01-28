@@ -7,6 +7,7 @@ const { CommandHandler } = require(handlersPath + '/CommandHandler');
 const { NonPrefixHandler } = require(handlersPath + '/NonPrefixHandler');
 const { createNonPrefixRegex } = require(utilPath + '/NonPrefixRegexCreator');
 const { ScamDetector } = require(utilPath + '/ScamDetector');
+const { WordleFilter } = require(utilPath + '/WordleFilter');
 
 /**
  * Class which handles interpreting an input message and invoking the correct
@@ -25,6 +26,7 @@ class MessageHandler {
     this.commandHandler = new CommandHandler();
     this.nonPrefixHandler = new NonPrefixHandler();
     this.scamDetector = new ScamDetector();
+    this.wordleFilter = new WordleFilter();
   }
 
   /**
@@ -49,10 +51,8 @@ class MessageHandler {
       message.botStartTime = this.startTime;
 
       // Delete Wordle messages except streak results
-      const WORDLE_BOT_ID = '1211781489931452447';
-      if (message.author.id === WORDLE_BOT_ID &&
-          !message.content.toLowerCase().includes('your group')) {
-        await message.delete().catch(() => {});
+      if (this.wordleFilter.isWordleSpam(message)) {
+        await this.wordleFilter.handleWordleSpam(message);
         return;
       }
 
