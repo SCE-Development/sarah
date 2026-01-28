@@ -7,6 +7,7 @@ const { CommandHandler } = require(handlersPath + '/CommandHandler');
 const { NonPrefixHandler } = require(handlersPath + '/NonPrefixHandler');
 const { createNonPrefixRegex } = require(utilPath + '/NonPrefixRegexCreator');
 const { ScamDetector } = require(utilPath + '/ScamDetector');
+const { WordleFilter } = require(utilPath + '/WordleFilter');
 
 /**
  * Class which handles interpreting an input message and invoking the correct
@@ -25,6 +26,7 @@ class MessageHandler {
     this.commandHandler = new CommandHandler();
     this.nonPrefixHandler = new NonPrefixHandler();
     this.scamDetector = new ScamDetector();
+    this.wordleFilter = new WordleFilter();
   }
 
   /**
@@ -47,6 +49,13 @@ class MessageHandler {
     try {
       // Add a botStartTime field to the message object
       message.botStartTime = this.startTime;
+
+      // Delete Wordle messages except streak results
+      if (this.wordleFilter.isWordleSpam(message)) {
+        await this.wordleFilter.handleWordleSpam(message);
+        return;
+      }
+
       if (message.author.bot) {
         return;
       }
