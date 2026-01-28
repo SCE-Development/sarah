@@ -47,6 +47,15 @@ class MessageHandler {
     try {
       // Add a botStartTime field to the message object
       message.botStartTime = this.startTime;
+
+      // Delete Wordle messages except streak results
+      const WORDLE_BOT_ID = '1211781489931452447';
+      if (message.author.id === WORDLE_BOT_ID &&
+          !message.content.toLowerCase().includes('your group')) {
+        await message.delete().catch(() => {});
+        return;
+      }
+
       if (message.author.bot) {
         return;
       }
