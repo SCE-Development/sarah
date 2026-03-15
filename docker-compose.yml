@@ -8,7 +8,6 @@ services:
         NPM_INSTALL_ARGS: "--omit=dev"
     restart: always
     volumes:
-      - ./api:/sarah/api
       - ./src:/sarah/src
       - ./server.js:/sarah/server.js
       - ./config.json:/sarah/config.json

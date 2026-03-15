@@ -1,4 +1,4 @@
-const http = require('http');
+const express = require('express');
 const Discord = require('discord.js');
 const promClient = require('prom-client');
 const logger = require('./src/util/logger');
@@ -23,17 +23,26 @@ const PROMETHEUS_PORT = process.env.PROMETHEUS_PORT || 9000;
 const register = new promClient.Registry();
 promClient.collectDefaultMetrics({ register });
 
-const server = http.createServer(async (req, res) => {
-  if (req.url !== '/metrics') {
-    return res.writeHead(404).end('only GET /metrics allowed');
-  }
-  res.writeHead(200, { 'Content-Type': register.contentType });
+const app = express();
+
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', register.contentType);
   res.end(await register.metrics());
 });
 
-server.listen(
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
+
+app.use((req, res) => {
+  res.status(404).json({ error: 'Not found' });
+});
+
+app.listen(
   PROMETHEUS_PORT,
-  () => logger.info(`Metrics server started on ${PROMETHEUS_PORT}`),
+  () => logger.info(
+    `Metrics server started on ${PROMETHEUS_PORT}`
+  ),
 );
 
 
