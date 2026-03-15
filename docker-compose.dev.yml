@@ -7,7 +7,6 @@ services:
       dockerfile: ./Dockerfile
     restart: always
     volumes:
-      - ./api:/sarah/api
       - ./src:/sarah/src
       - ./server.js:/sarah/server.js
       - ./config.json:/sarah/config.json
