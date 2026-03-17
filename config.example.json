@@ -20,5 +20,9 @@
   },
   "guildId": "xxxxxxxxxx",
   "PARKING_CHANNEL_ID": "xxxxxxxx",
-  "WORDLE_BOT_ID": "xxxxxxxxxx"
+  "WORDLE_BOT_ID": "xxxxxxxxxx",
+  "QOTD": {
+    "QOTD_CHANNEL_ID": "xxxxxxxx",
+    "ALLOWED_ROLE_ID": "xxxxxxxxxxx"
+  }
 }
