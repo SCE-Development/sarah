@@ -14,10 +14,9 @@ const {
 } = require('./src/handlers/VoiceChannelChangeHandler');
 const { NewMemberAddHandler } = require('./src/handlers/NewMemberAddHandler');
 const { MemberLeaveHandler } = require('./src/handlers/MemberLeaveHandler');
-const { ReactionHandler } = require('./src/handlers/ReactionHandler');
+const { ReactionHandler } = require ('./src/handlers/ReactionHandler');
 const { ScamDetector } = require('./src/util/ScamDetector');
 const { initScheduler } = require('./src/util/qotdHandler');
-
 
 const PROMETHEUS_PORT = process.env.PROMETHEUS_PORT || 9000;
 
@@ -69,12 +68,12 @@ const startBot = async () => {
   const newMemberHandler = new NewMemberAddHandler();
   const memberLeaveHandler = new MemberLeaveHandler();
   // creating a new ReactionHandler object
-  // we can call the methods defined in the ReactionHandler class by
+  // we can call the methods defined in the ReactionHandler class by 
   // calling them on the reactionHandler object
   const reactionHandler = new ReactionHandler();
   const scamDetector = new ScamDetector();
   const parkingScraper = require('./src/util/ParkingScraper');
-
+  
   client.once('ready', () => {
     messageHandler.initialize();
     parkingScraper.initialize(client);
@@ -114,15 +113,15 @@ const startBot = async () => {
   // from the reactionHandler class
 
   // we can use reaction.message, to get the message object, or reaction.emoji
-  // we can use message.id, or message.content, to access information about
+  // we can use message.id, or message.content, to access information about 
   // the message
-  // user is a User object, and contains information about the person
+  // user is a User object, and contains information about the person 
   // that reacted
   // we can use user.id or user.username on the User object
-  // everything is a json........... MessageReaction...... User.........
+  // everything is a json........... MessageReaction...... User......... 
   // Message........
-  // what if WE yes me and you are jsons too.........
-  // look at the love inside my heart for you with
+  // what if WE yes me and you are jsons too......... 
+  // look at the love inside my heart for you with 
   // JSON.stringify(me.heart) vro.......
 
   client.on('messageReactionAdd', async (reaction, user) => {
@@ -155,10 +154,8 @@ const startBot = async () => {
     const guild = client.guilds.cache.get(guildId);
 
     if (!guild) {
-      return interaction.reply({
-        content: 'Guild not found.',
-        ephemeral: true
-      });
+      return interaction.reply({ content: 'Guild not found.', 
+        ephemeral: true });
     }
 
     try {
@@ -169,33 +166,24 @@ const startBot = async () => {
       const role = guild.roles.cache.get(roleId);
 
       if (!role) {
-        return interaction.reply({
-          content: 'Role not found.',
-          ephemeral: true
-        });
+        return interaction.reply({ content: 'Role not found.', 
+          ephemeral: true });
       }
 
       if (member.roles.cache.has(roleId)) {
         await member.roles.remove(role);
-        await interaction.reply({
-          content: 'Removed the role ' +
-            `**${role.name}** from you.`, ephemeral: true
-        });
+        await interaction.reply({ content: 'Removed the role ' + 
+          `**${role.name}** from you.`, ephemeral: true });
       } else {
         await member.roles.add(role);
-        await interaction.reply({
-          content: 'Added the role ' +
-            `**${role.name}** to you.`, ephemeral: true
-        });
+        await interaction.reply({ content: 'Added the role ' + 
+          `**${role.name}** to you.`, ephemeral: true });
       }
     } catch (error) {
       console.error(error);
-      await interaction.reply({
-        content: 'There was an error while' +
-          'updating your roles.', ephemeral: true
-      });
-    }
-  });
+      await interaction.reply({ content: 'There was an error while' +
+        'updating your roles.', ephemeral: true });
+    }});
   client.login(API_TOKEN);
 };
 
