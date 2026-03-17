@@ -23,6 +23,8 @@
   "WORDLE_BOT_ID": "xxxxxxxxxx",
   "QOTD": {
     "QOTD_CHANNEL_ID": "xxxxxxxx",
-    "ALLOWED_ROLE_ID": "xxxxxxxxxxx"
+    "ALLOWED_ROLE_ID": "xxxxxxxxxxx",
+    "CRON_TIME": "0 8 * * *",
+    "QOTD_ROLE_ID": "xxxxxxx"
   }
 }
