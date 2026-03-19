@@ -8,8 +8,7 @@ config.json
 # MongoDB
 data/db
 
-# SQLite3
-src/database/
+
 
 # other
 .DS_Store
