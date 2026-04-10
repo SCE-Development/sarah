@@ -16,7 +16,7 @@ const { NewMemberAddHandler } = require('./src/handlers/NewMemberAddHandler');
 const { MemberLeaveHandler } = require('./src/handlers/MemberLeaveHandler');
 const { ReactionHandler } = require ('./src/handlers/ReactionHandler');
 const { ScamDetector } = require('./src/util/ScamDetector');
-
+const { initScheduler } = require('./src/util/qotdHandler');
 
 const PROMETHEUS_PORT = process.env.PROMETHEUS_PORT || 9000;
 
@@ -77,6 +77,7 @@ const startBot = async () => {
   client.once('ready', () => {
     messageHandler.initialize();
     parkingScraper.initialize(client);
+    initScheduler(client);
     client.user.setPresence({
       activity: {
         name: `${prefix}help`,
