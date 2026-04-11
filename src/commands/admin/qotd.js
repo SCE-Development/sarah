@@ -8,7 +8,7 @@ module.exports = new Command({
   description: 'question of the day queue',
   aliases: [],
   example: 's!qotd add <message> | s!qotd list',
-  permissions: 'admin',
+  permissions: 'none',
   category: 'mod',
   execute: async (message, args) => {
     const author = message.member;

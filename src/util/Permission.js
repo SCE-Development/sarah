@@ -1,8 +1,10 @@
+const { QOTD } = require('../../config.json');
 function isOfficer(user) {
   try {
     return (
-      user.permissions.has('MANAGE_CHANNELS') ||
-      user.permissions.has('ADMINISTRATOR')
+      user.permissions.has('ManageChannels') ||
+      user.permissions.has('Administrator') ||
+      user.roles.cache.has(QOTD.ALLOWED_ROLE_ID)
     );
   } catch (error) {
     return false;
