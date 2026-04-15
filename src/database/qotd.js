@@ -54,7 +54,20 @@ module.exports = {
   getPast: () => all(
     'SELECT * FROM past_questions ORDER BY posted_at DESC LIMIT 10'),
 
-  removeQuestion: (id) => run('DELETE FROM queue WHERE id = ?', [id]),
+  removeQuestion: async (position) => {
+    const index = parseInt(position) - 1;
+    if (isNaN(index) || index < 0) throw new Error('Invalid position');
+
+    const target = await get(
+      'SELECT id FROM queue ORDER BY priority DESC, id ASC LIMIT 1 OFFSET ?',
+      [index]
+    );
+
+    if (target) {
+      return run('DELETE FROM queue WHERE id = ?', [target.id]);
+    }
+    return null;
+  },
 
   popNext: async () => {
     const next = await get(
