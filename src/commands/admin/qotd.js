@@ -42,7 +42,7 @@ module.exports = new Command({
             .setColor(0xA47DAB)
             .setDescription(
               queue.map((q, i) =>
-                `#${i + 1} (ID ${q.id}) - ${q.question}`)
+                `#${i + 1} - ${q.question}`)
                 .join('\n') || 'Queue is empty.');
           message.channel.send({ embeds: [queueEmbed] });
           break;
